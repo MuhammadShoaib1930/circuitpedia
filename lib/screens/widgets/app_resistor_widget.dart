@@ -1,15 +1,20 @@
 import 'package:circuitpedia/logic/resistor_logcs.dart';
+import 'package:circuitpedia/models/resistor_model.dart';
 import 'package:circuitpedia/screens/widgets/resistor_color_selector.dart';
+import 'package:circuitpedia/services/hive_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppResistorWidget extends StatelessWidget {
   final BuildContext pContext;
-  final List<String> colorsNames;
+  final ResistorModel resistorModel;
+  final bool isFour;
+  final bool isDark = HiveService().isDark();
   AppResistorWidget({
     super.key,
     required this.pContext,
-    required this.colorsNames,
+    required this.resistorModel,
+    this.isFour = true,
   });
   final ResistorLogcs resistorLogcs = ResistorLogcs();
 
@@ -21,14 +26,8 @@ class AppResistorWidget extends StatelessWidget {
       child: Stack(
         alignment: AlignmentGeometry.centerLeft,
         children: [
-          Positioned(
-            left: 48,
-            child: Container(color: Colors.white, width: 257, height: 80),
-          ),
-          Positioned(
-            left: 0,
-            child: Container(width: 50, height: 5, color: Colors.white),
-          ),
+          Positioned(left: 48, child: Container(color: Colors.grey, width: 257, height: 80)),
+          Positioned(left: 0, child: Container(width: 50, height: 5, color: Colors.grey)),
 
           Positioned(
             left: (55),
@@ -37,17 +36,18 @@ class AppResistorWidget extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => ResistorColorSelector(
-                    oldName: colorsNames[0],
+                    oldIndex: resistorModel.resistor0Index,
                     pContext: pContext,
-                    index: 0,
-                    isFour: (colorsNames.length > 4) ? false : true,
+                    position: 0,
+                    isFour: isFour,
+                    isValue: true,
                   ),
                 );
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: resistorLogcs.getColor(colorsNames[0]),
-                  border: Border.all(color: Colors.black),
+                  color: Data.resistorColors[resistorModel.resistor0Index],
+                  border: Border.all(color: Colors.white),
                 ),
                 width: 45,
                 height: 75,
@@ -61,17 +61,18 @@ class AppResistorWidget extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => ResistorColorSelector(
-                    oldName: colorsNames[1],
+                    oldIndex: resistorModel.resistor1Index,
                     pContext: pContext,
-                    index: 1,
-                    isFour: (colorsNames.length > 4) ? false : true,
+                    position: 1,
+                    isFour: isFour,
+                    isValue: true,
                   ),
                 );
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: resistorLogcs.getColor(colorsNames[1]),
-                  border: Border.all(color: Colors.black),
+                  color: Data.resistorColors[resistorModel.resistor1Index],
+                  border: Border.all(color: Colors.white),
                 ),
                 width: 45,
                 height: 75,
@@ -85,17 +86,19 @@ class AppResistorWidget extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => ResistorColorSelector(
-                    oldName: colorsNames[2],
+                    oldIndex: resistorModel.resistor2Index,
                     pContext: pContext,
-                    index: 2,
-                    isFour: (colorsNames.length > 4) ? false : true,
+                    position: 2,
+                    isFour: isFour,
+                    isValue: (isFour) ? false : true,
+                    isPower: (isFour) ? true : false,
                   ),
                 );
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: resistorLogcs.getColor(colorsNames[2]),
-                  border: Border.all(color: Colors.black),
+                  color: Data.resistorColors[resistorModel.resistor2Index],
+                  border: Border.all(color: Colors.white),
                 ),
 
                 width: 45,
@@ -111,17 +114,19 @@ class AppResistorWidget extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => ResistorColorSelector(
-                    oldName: colorsNames[3],
+                    oldIndex: resistorModel.resistor3Index,
                     pContext: pContext,
-                    index: 3,
-                    isFour: (colorsNames.length > 4) ? false : true,
+                    position: 3,
+                    isFour: isFour,
+                    isPower: (isFour) ? false : true,
+                    isPersentage: (isFour) ? true : false,
                   ),
                 );
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: resistorLogcs.getColor(colorsNames[3]),
-                  border: Border.all(color: Colors.black),
+                  color: Data.resistorColors[resistorModel.resistor3Index],
+                  border: Border.all(color: Colors.white),
                 ),
 
                 width: 45,
@@ -129,7 +134,7 @@ class AppResistorWidget extends StatelessWidget {
               ),
             ),
           ),
-          if (colorsNames.length > 4)
+          if (!isFour)
             Positioned(
               left: (255),
               child: InkWell(
@@ -137,27 +142,25 @@ class AppResistorWidget extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) => ResistorColorSelector(
-                      oldName: colorsNames[4],
+                      oldIndex: resistorModel.resistor4Index,
                       pContext: pContext,
-                      index: 4,
-                      isFour: (colorsNames.length > 4) ? false : true,
+                      position: 4,
+                      isFour: isFour,
+                      isPersentage: true,
                     ),
                   );
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: resistorLogcs.getColor(colorsNames[4]),
-                    border: Border.all(color: Colors.black),
+                    color: Data.resistorColors[resistorModel.resistor4Index],
+                    border: Border.all(color: Colors.white),
                   ),
                   width: 45,
                   height: 75,
                 ),
               ),
             ),
-          Positioned(
-            left: 300,
-            child: Container(width: 50, height: 5, color: Colors.white),
-          ),
+          Positioned(left: 300, child: Container(width: 50, height: 5, color: Colors.grey)),
         ],
       ),
     );

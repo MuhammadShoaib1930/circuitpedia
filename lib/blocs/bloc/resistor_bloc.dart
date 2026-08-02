@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:circuitpedia/logic/resistor_logcs.dart';
+import 'package:circuitpedia/models/resistor_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'resistor_event.dart';
@@ -10,37 +11,36 @@ class ResistorBloc extends Bloc<ResistorEvent, ResistorState> {
   ResistorBloc() : super(ResistorState()) {
     on<SetResisterColors>(_setResisterColors);
     on<Convert>(_convert);
+    on<SetResisterValue>(_setResisterValue);
+    on<SetResisterPercentage>(_setResisterPercentage);
   }
 
-  FutureOr<void> _setResisterColors(
-    SetResisterColors event,
-    Emitter<ResistorState> emit,
-  ) {
-    ResistorLogcs resistorLogcs = ResistorLogcs();
-    List<String> nameList4 = [...state.colorsName4];
-    List<String> nameList5 = [...state.colorsName5];
-    if (event.isfourColuors) {
-      nameList4[event.posstion] = event.colorName;
+  FutureOr<void> _setResisterColors(SetResisterColors event, Emitter<ResistorState> emit) {
+    if (event.isFour) {
+      List<int> data = [
+        state.resistorModel4.resistor0Index,
+        state.resistorModel4.resistor1Index,
+        state.resistorModel4.resistor2Index,
+        state.resistorModel4.resistor3Index,
+      ];
+      data[event.position] = event.index;
+      emit(
+        ResistorState(
+          resistorModel4: ResistorLogcs().colorToValue(
+            resistorModel: state.resistorModel4,
+            data: data,
+          ),
+          resistorModel5: state.resistorModel5,
+        ),
+      );
     } else {
-      nameList5[event.posstion] = event.colorName;
+      
     }
-
-    emit(
-      ResistorState(
-        colorsName4: nameList4,
-        colorsName5: nameList5,
-        result4: resistorLogcs.calculated(names: nameList4),
-        result5: resistorLogcs.calculated(names: nameList5),
-      ),
-    );
   }
 
-  FutureOr<void> _convert(Convert event, Emitter<ResistorState> emit) {
-    ResistorLogcs resistorLogcs = ResistorLogcs();
-    String result = resistorLogcs.valuesToAlphanumeric(
-      event.symbols,
-      state.result4,
-    );
-    emit(state.copyWith(result4: result));
-  }
+  FutureOr<void> _convert(Convert event, Emitter<ResistorState> emit) {}
+
+  FutureOr<void> _setResisterValue(SetResisterValue event, Emitter<ResistorState> emit) {}
+
+  FutureOr<void> _setResisterPercentage(SetResisterPercentage event, Emitter<ResistorState> emit) {}
 }

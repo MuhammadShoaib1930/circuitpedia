@@ -7,19 +7,24 @@ import 'package:go_router/go_router.dart';
 class ResistorColorSelector extends StatelessWidget {
   ResistorColorSelector({
     super.key,
-    required this.oldName,
+    required this.oldIndex,
     required this.pContext,
-    required this.index,
+    required this.position,
     required this.isFour,
+    this.isPersentage = false,
+    this.isPower = false,
+    this.isValue = false,
   });
   final ResistorLogcs resistorLogcs = ResistorLogcs();
-  final String oldName;
+  final int oldIndex;
   final BuildContext pContext;
-  final int index;
+  final int position;
   final bool isFour;
+  final bool isPersentage;
+  final bool isPower;
+  final bool isValue;
   @override
   Widget build(BuildContext context) {
-    final List<String> colorsName = resistorLogcs.colorsValue.keys.toList();
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -27,48 +32,53 @@ class ResistorColorSelector extends StatelessWidget {
           height: 500,
           child: GridView.builder(
             itemBuilder: (context, i) {
-              return SizedBox(
-                child: InkWell(
-                  onTap: () {
-                    pContext.read<ResistorBloc>().add(
-                      SetResisterColors(
-                        posstion: index,
-                        colorName: colorsName[i],
-                        isfourColuors: isFour,
-                      ),
-                    );
-                    context.pop();
-                  },
-                  child: Card(
-                    color: Colors.transparent,
-                    shape: Border.all(
-                      color: (oldName == colorsName[i])
-                          ? Colors.blue
-                          : Colors.black,
-                      width: 1,
-                    ),
-                    child: Container(
-                      color: resistorLogcs.getColor(colorsName[i]),
-                      child: Center(
-                        child: Text(
-                          colorsName[i],
-                          style: TextStyle(
-                            color: (i == 2) ? Colors.white : Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            backgroundColor: Colors.transparent,
+              bool isShow = true;
+              if (isPersentage) {
+                if (i == 2 || i == 5 || i == 6 || i == 10 || i == 11) {
+                  isShow = false;
+                }
+              }
+              if (isValue) {
+                if (i == 0 || i == 1) {
+                  isShow = false;
+                }
+              }
+              return (isShow)
+                  ? SizedBox(
+                      child: InkWell(
+                        onTap: () {
+                          pContext.read<ResistorBloc>().add(
+                            SetResisterColors(position: position, index: i, isFour: isFour),
+                          );
+                          context.pop();
+                        },
+                        child: Card(
+                          color: Colors.transparent,
+                          shape: Border.all(
+                            color: (oldIndex == i) ? Colors.blue : Colors.black,
+                            width: 2,
+                          ),
+                          child: Container(
+                            color: Data.resistorColors[i],
+                            child: Center(
+                              child: Text(
+                                Data.resistorNames[i],
+                                style: TextStyle(
+                                  color: (i == 2) ? Colors.white : Colors.black,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              );
+                    )
+                  : SizedBox();
             },
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-            ),
-            itemCount: colorsName.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+            itemCount: Data.resistorNames.length,
           ),
         ),
       ),

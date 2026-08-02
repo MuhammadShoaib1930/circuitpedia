@@ -8,21 +8,40 @@ sealed class ResistorEvent extends Equatable {
 }
 
 final class SetResisterColors extends ResistorEvent {
-  final int posstion;
-  final String colorName;
-  final bool isfourColuors;
-
-  const SetResisterColors({
-    required this.posstion,
-    required this.colorName,
-    this.isfourColuors = true,
-  });
+  final int position;
+  final int index;
+  final bool isFour;
+  const SetResisterColors({required this.position, required this.index, this.isFour = false});
 
   @override
-  List<Object> get props => [posstion, colorName, isfourColuors];
+  List<Object> get props => [position, index];
+}
+
+final class SetResisterValue extends ResistorEvent {
+  final int value;
+  final String symbol;
+  final String percentage;
+  final bool isFour;
+  const SetResisterValue({
+    required this.value,
+    required this.percentage,
+    required this.symbol,
+    this.isFour = true,
+  });
+  @override
+  List<Object> get props => [value, symbol, percentage];
+}
+
+final class SetResisterPercentage extends ResistorEvent {
+  final String percentage;
+  final bool isFour;
+  const SetResisterPercentage({required this.percentage, this.isFour = true});
+  @override
+  List<Object> get props => [percentage];
 }
 
 final class Convert extends ResistorEvent {
   final String symbols;
-  const Convert(this.symbols);
+  final bool isFour;
+  const Convert(this.symbols, [this.isFour = true]);
 }

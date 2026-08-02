@@ -2,31 +2,41 @@
 part of 'resistor_bloc.dart';
 
 class ResistorState extends Equatable {
-  final List<String> colorsName4;
-  final String result4;
-  final List<String> colorsName5;
-  final String result5;
+  final ResistorModel resistorModel4;
+  final ResistorModel resistorModel5;
   const ResistorState({
-    this.colorsName4 = const ["None", "None", "None", "None"],
-    this.colorsName5 = const ["None", "None", "None", "None", "None"],
-    this.result4 = "0 Ω %0.0",
-    this.result5 = "0 Ω %0.0",
+    this.resistorModel4 = const ResistorModel(
+      resistor0Index: 12,
+      resistor1Index: 12,
+      resistor2Index: 12,
+      resistor3Index: 12,
+      resistor4Index: 12,
+      resultValue: 0,
+      resultsymbol: "Ω",
+      resultpercentage: "±0%",
+    ),
+    this.resistorModel5 = const ResistorModel(
+      resistor0Index: 12,
+      resistor1Index: 12,
+      resistor2Index: 12,
+      resistor3Index: 12,
+      resistor4Index: 12,
+      resultValue: 0,
+      resultsymbol: "Ω",
+      resultpercentage: "±0%",
+    ),
   });
 
   @override
-  List<Object> get props => [colorsName4, colorsName5, result4, result5];
+  List<Object> get props => [resistorModel4, resistorModel5];
 
   ResistorState copyWith({
-    List<String>? colorsName4,
-    String? result4,
-    List<String>? colorsName5,
-    String? result5,
+    ResistorModel? resistorModel4,
+    ResistorModel? resistorModel5,
   }) {
     return ResistorState(
-      colorsName4: colorsName4 ?? this.colorsName4,
-      result4: result4 ?? this.result4,
-      colorsName5: colorsName5 ?? this.colorsName5,
-      result5: result5 ?? this.result5,
+      resistorModel4: resistorModel4 ?? this.resistorModel4,
+      resistorModel5: resistorModel5 ?? this.resistorModel5,
     );
   }
 }
