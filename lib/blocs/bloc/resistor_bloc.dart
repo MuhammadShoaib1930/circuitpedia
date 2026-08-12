@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:circuitpedia/logic/resistor_logcs.dart';
 import 'package:circuitpedia/models/resistor_model.dart';
@@ -10,37 +11,63 @@ part 'resistor_state.dart';
 class ResistorBloc extends Bloc<ResistorEvent, ResistorState> {
   ResistorBloc() : super(ResistorState()) {
     on<SetResisterColors>(_setResisterColors);
-    on<Convert>(_convert);
-    on<SetResisterValue>(_setResisterValue);
-    on<SetResisterPercentage>(_setResisterPercentage);
+    on<SetPersentage>(_setPersentage);
+    on<SetValueColors>(_setValueColors);
   }
 
   FutureOr<void> _setResisterColors(SetResisterColors event, Emitter<ResistorState> emit) {
     if (event.isFour) {
-      List<int> data = [
-        state.resistorModel4.resistor0Index,
-        state.resistorModel4.resistor1Index,
-        state.resistorModel4.resistor2Index,
-        state.resistorModel4.resistor3Index,
-      ];
-      data[event.position] = event.index;
       emit(
         ResistorState(
           resistorModel4: ResistorLogcs().colorToValue(
             resistorModel: state.resistorModel4,
-            data: data,
+            position: event.position,
+            index: event.index,
+            isFour: true,
+            symbol: event.symbol,
           ),
           resistorModel5: state.resistorModel5,
         ),
       );
     } else {
-      
+      emit(
+        ResistorState(
+          resistorModel5: ResistorLogcs().colorToValue(
+            resistorModel: state.resistorModel5,
+            position: event.position,
+            index: event.index,
+            isFour: false,
+            symbol: event.symbol,
+          ),
+          resistorModel4: state.resistorModel4,
+        ),
+      );
     }
   }
 
-  FutureOr<void> _convert(Convert event, Emitter<ResistorState> emit) {}
+  FutureOr<void> _setPersentage(SetPersentage event, Emitter<ResistorState> emit) {
+    if (event.isFour) {
+      emit(
+        state.copyWith(
+          resistorModel4: state.resistorModel4.copyWith(
+            resistor3Index: event.index,
+            resultpercentage: Data.resistorPersentage[event.index],
+          ),
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          resistorModel5: state.resistorModel5.copyWith(
+            resistor4Index: event.index,
+            resultpercentage: Data.resistorPersentage[event.index],
+          ),
+        ),
+      );
+    }
+  }
 
-  FutureOr<void> _setResisterValue(SetResisterValue event, Emitter<ResistorState> emit) {}
-
-  FutureOr<void> _setResisterPercentage(SetResisterPercentage event, Emitter<ResistorState> emit) {}
+  FutureOr<void> _setValueColors(SetValueColors event, Emitter<ResistorState> emit) {
+    
+  }
 }

@@ -34,18 +34,39 @@ class ResistanceScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    width: 300.r,
+                    // width: 400.r,
                     height: 100.r,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          width: 100.r,
+                          width: 200.r,
                           height: 90,
                           child: TextField(
                             controller: textEditingController4,
-                            keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
-                            decoration: InputDecoration(border: OutlineInputBorder()),
+
+                            keyboardType: TextInputType.numberWithOptions(
+                              signed: false,
+                              decimal: true,
+                            ),
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              suffix: IconButton(
+                                onPressed: () {
+                                  //TODO
+                                  if (textEditingController4.text.isNotEmpty) {
+                                    ResistorLogcs().valueToColors(
+                                      value: double.parse(textEditingController4.text.toString()),
+                                      isFour: true,
+                                      model: state.resistorModel4,
+                                    );
+                                  }
+                                },
+                                icon: Icon(Icons.build_circle_rounded),
+                              ),
+                            ),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
 
@@ -58,25 +79,41 @@ class ResistanceScreen extends StatelessWidget {
 
                             return DropdownMenuItem<String>(
                               value: symbols[index],
-                              child: Text(
-                                "${symbols[index]}",
-                                style: TextStyle(fontSize: 22.r, fontWeight: FontWeight.normal),
-                              ),
+                              child: Text("${symbols[index]}", style: TextStyle(fontSize: 18.r)),
                             );
                           }),
                           onChanged: (value) {
-                            context.read<ResistorBloc>().add(Convert(value ?? "Ω"));
+                            context.read<ResistorBloc>().add(
+                              SetResisterColors(isFour: true, symbol: value ?? "Ω"),
+                            );
                           },
                         ),
                         DropdownButton<int>(
-                          value: state.resistorModel4.resistor4Index,
+                          value: state.resistorModel4.resistor3Index,
                           items: Data.resistorPersentage.entries.map((entry) {
                             return DropdownMenuItem<int>(
                               value: entry.key,
                               child: Text(entry.value),
                             );
                           }).toList(),
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            context.read<ResistorBloc>().add(SetPersentage(value!, true));
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text("Resistance value comes between"),
+                  Flexible(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text("Lower ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                        Text("12.23", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Upper ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                        Text(
+                          "123.23 ",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

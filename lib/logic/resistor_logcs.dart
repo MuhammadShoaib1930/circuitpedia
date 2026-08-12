@@ -87,63 +87,106 @@ class Data {
 class ResistorLogcs {
   ResistorModel colorToValue({
     required ResistorModel resistorModel,
-    required List<int> data,
+    int index = -1,
+    int position = -1,
     bool isFour = true,
+    String symbol = "Ω",
   }) {
+    List<int> data = [
+      resistorModel.resistor0Index,
+      resistorModel.resistor1Index,
+      resistorModel.resistor2Index,
+      resistorModel.resistor3Index,
+    ];
+    if (position != -1 && index != -1) {
+      data[position] = index;
+    }
     if (isFour) {
-      double value = (Data.resistorValues[data[0]] * 10 + Data.resistorValues[data[1]]);
-      double power = Data.resistorPower[data[2]];
+      double result =
+          (Data.resistorValues[data[0]] * 10 + Data.resistorValues[data[1]]) *
+          Data.resistorPower[data[2]];
+      if (symbol == "pΩ" || symbol == "nΩ" || symbol == "μΩ" || symbol == "mΩ") {
+        result *= Data.symbolToUnits[symbol]!;
+      } else if (symbol == "kΩ" || symbol == "MΩ" || symbol == "GΩ" || symbol == "TΩ") {
+        result /= Data.symbolToUnits[symbol]!;
+      }
       String percentage = Data.resistorPersentage[data[3]] ?? "";
       return resistorModel.copyWith(
         resistor0Index: data[0],
         resistor1Index: data[1],
         resistor2Index: data[2],
         resistor3Index: data[3],
-        resultValue: value * power,
-        resultsymbol: "Ω",
+        resultValue: result,
+        resultsymbol: symbol,
         resultpercentage: percentage,
       );
     } else {
-      double value =
+      double result =
           (Data.resistorValues[data[0]] * 100 +
-          (Data.resistorValues[data[1]] * 10) +
-          Data.resistorValues[data[2]]);
-      double power = Data.resistorPower[data[3]];
+              (Data.resistorValues[data[1]] * 10) +
+              Data.resistorValues[data[2]]) *
+          Data.resistorPower[data[3]];
       String percentage = Data.resistorPersentage[data[4]] ?? "";
+
+      if (symbol == "pΩ" || symbol == "nΩ" || symbol == "μΩ" || symbol == "mΩ") {
+        result *= Data.symbolToUnits[symbol]!;
+      } else if (symbol == "kΩ" || symbol == "MΩ" || symbol == "GΩ" || symbol == "TΩ") {
+        result /= Data.symbolToUnits[symbol]!;
+      }
       return resistorModel.copyWith(
         resistor0Index: data[0],
         resistor1Index: data[1],
         resistor2Index: data[2],
         resistor3Index: data[3],
         resistor4Index: data[4],
-        resultValue: value * power,
-        resultsymbol: "Ω",
+        resultValue: result,
+        resultsymbol: symbol,
         resultpercentage: percentage,
       );
     }
   }
 
-  List<String> _toOhme(String fromValue) {
-    List<String> values = fromValue.split(" ");
-    switch (values[1]) {
-      case "pΩ" || "nΩ" || "μΩ" || "mΩ" || "Ω":
-        return ["${double.parse(values[0]) / Data.symbolToUnits[values[1]]!}", "Ω", values[2]];
-      case "kΩ" || "MΩ" || "GΩ" || "TΩ":
-        return ["${double.parse(values[0]) * Data.symbolToUnits[values[1]]!}", "Ω", values[2]];
-    }
-    return [];
+  double _percentageToDouble(String percentage) {
+    return double.parse(percentage.replaceAll(RegExp(r'[±%]'), ""));
   }
 
-  String valuesToAlphanumeric(String alphanumeric, String fromValue) {
-    if (fromValue.isEmpty) return "Ω";
-    List<String> listValues = _toOhme(fromValue);
-    double value = double.parse(listValues[0]);
-    switch (alphanumeric) {
-      case "pΩ" || "nΩ" || "μΩ" || "mΩ" || "Ω":
-        return "${value * (Data.symbolToUnits[alphanumeric])!} $alphanumeric ${listValues[2]}";
-      case "kΩ" || "MΩ" || "GΩ" || "TΩ":
-        return "${value / Data.symbolToUnits[alphanumeric]!} $alphanumeric ${listValues[2]}";
+  (double, double) getMinMax(double value, String percentage) {
+    double tolerance = value * (_percentageToDouble(percentage) / 100);
+    return (value - tolerance, value + tolerance);
+  }
+
+  int getValue(List<double> values, double value) {
+    for (int i = 0; i < values.length; i++) {
+      if (values[i] == value) {
+        return i;
+      }
     }
-    return "";
+    return -1;
+  }
+
+  void valueToColors({required double value, required bool isFour, required ResistorModel model}) {
+    if (isFour) {
+      // 0.0 to 9.9
+      if (value >= 0.0 && value <= 9.9) {
+        value = double.parse(value.toString().replaceAll('.', ''))*10;
+      }
+      double minV = 0, maxV = 0;
+      (minV, maxV) = getMinMax(value, model.resultpercentage);
+      double digits = double.parse("1e${value.toInt().toString().substring(2).length}");
+      double r1 = (int.parse((minV).toString()[0]) * 10 + int.parse((minV).toString()[1])) * digits;
+      double r2 = (int.parse((maxV).toString()[0]) * 10 + int.parse((maxV).toString()[1])) * digits;
+      double result = 0;
+      if (r1 >= minV && r1 <= maxV) {
+        result = r1;
+      } else {
+        result = r2;
+      }
+      ResistorModel newModel = model.copyWith(
+        resistor0Index: getValue(Data.resistorValues, double.parse(result.toString()[0])),
+        resistor1Index: getValue(Data.resistorValues, double.parse(result.toString()[1])),
+        resistor3Index: getValue(Data.resistorPower, double.parse(result.toString()[2])),
+      );
+      print(newModel);
+    } else {}
   }
 }

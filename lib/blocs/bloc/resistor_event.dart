@@ -11,37 +11,30 @@ final class SetResisterColors extends ResistorEvent {
   final int position;
   final int index;
   final bool isFour;
-  const SetResisterColors({required this.position, required this.index, this.isFour = false});
-
-  @override
-  List<Object> get props => [position, index];
-}
-
-final class SetResisterValue extends ResistorEvent {
-  final int value;
   final String symbol;
-  final String percentage;
-  final bool isFour;
-  const SetResisterValue({
-    required this.value,
-    required this.percentage,
-    required this.symbol,
-    this.isFour = true,
+  const SetResisterColors({
+    this.position = -1,
+    this.index = -1,
+    this.isFour = false,
+    this.symbol = "Ω",
   });
+
   @override
-  List<Object> get props => [value, symbol, percentage];
+  List<Object> get props => [position, index, isFour, symbol];
 }
 
-final class SetResisterPercentage extends ResistorEvent {
-  final String percentage;
+final class SetPersentage extends ResistorEvent {
+  final int index;
   final bool isFour;
-  const SetResisterPercentage({required this.percentage, this.isFour = true});
+  const SetPersentage(this.index, this.isFour);
   @override
-  List<Object> get props => [percentage];
+  List<Object> get props => [index, isFour];
 }
 
-final class Convert extends ResistorEvent {
-  final String symbols;
+final class SetValueColors extends ResistorEvent {
+  final double value;
   final bool isFour;
-  const Convert(this.symbols, [this.isFour = true]);
+  const SetValueColors(this.value, this.isFour);
+  @override
+  List<Object> get props => [value, isFour];
 }
