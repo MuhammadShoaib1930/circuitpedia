@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResistanceScreen extends StatelessWidget {
   ResistanceScreen({super.key});
-  void navigator(BuildContext context, int i, int index, bool isFour) {
-    context.read<ResistorBloc>().add(SetResisterColors(position: i, index: index, isFour: isFour));
+  void navigator(BuildContext context, int i, int index) {
+    context.read<ResistorBloc>().add(SetResisterColors(position: i, index: index));
   }
 
   final ResistorLogcs resistorLogcs = ResistorLogcs();
@@ -56,11 +56,10 @@ class ResistanceScreen extends StatelessWidget {
                                 onPressed: () {
                                   //TODO
                                   if (textEditingController4.text.isNotEmpty) {
-                                    ResistorLogcs().valueToColors(
-                                      value: double.parse(textEditingController4.text.toString()),
-                                      isFour: true,
-                                      model: state.resistorModel4,
+                                    double value = double.parse(
+                                      textEditingController4.text.toString(),
                                     );
+                                    context.read<ResistorBloc>().add(SetValueColors(value));
                                   }
                                 },
                                 icon: Icon(Icons.build_circle_rounded),
@@ -70,36 +69,36 @@ class ResistanceScreen extends StatelessWidget {
                           ),
                         ),
 
-                        DropdownButton<String>(
-                          borderRadius: BorderRadius.circular(10.r),
+                        // DropdownButton<String>(
+                        //   borderRadius: BorderRadius.circular(10.r),
 
-                          value: state.resistorModel4.resultsymbol,
-                          items: List.generate(Data.symbolToUnits.length, (index) {
-                            List symbols = Data.symbolToName.keys.toList();
+                        //   value: state.resistorModel4.resultsymbol,
+                        //   items: List.generate(Data.symbolToUnits.length, (index) {
+                        //     List symbols = Data.symbolToName.keys.toList();
 
-                            return DropdownMenuItem<String>(
-                              value: symbols[index],
-                              child: Text("${symbols[index]}", style: TextStyle(fontSize: 18.r)),
-                            );
-                          }),
-                          onChanged: (value) {
-                            context.read<ResistorBloc>().add(
-                              SetResisterColors(isFour: true, symbol: value ?? "Ω"),
-                            );
-                          },
-                        ),
-                        DropdownButton<int>(
-                          value: state.resistorModel4.resistor3Index,
-                          items: Data.resistorPersentage.entries.map((entry) {
-                            return DropdownMenuItem<int>(
-                              value: entry.key,
-                              child: Text(entry.value),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            context.read<ResistorBloc>().add(SetPersentage(value!, true));
-                          },
-                        ),
+                        //     return DropdownMenuItem<String>(
+                        //       value: symbols[index],
+                        //       child: Text("${symbols[index]}", style: TextStyle(fontSize: 18.r)),
+                        //     );
+                        //   }),
+                        //   onChanged: (value) {
+                        //     context.read<ResistorBloc>().add(
+                        //       SetResisterColors(symbol: value ?? "Ω"),
+                        //     );
+                        //   },
+                        // ),
+                        // DropdownButton<int>(
+                        //   value: state.resistorModel4.resistor3Index,
+                        //   items: Data.resistorPersentage.entries.map((entry) {
+                        //     return DropdownMenuItem<int>(
+                        //       value: entry.key,
+                        //       child: Text(entry.value),
+                        //     );
+                        //   }).toList(),
+                        //   onChanged: (value) {
+                        //     context.read<ResistorBloc>().add(SetPersentage(value!));
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
@@ -109,11 +108,18 @@ class ResistanceScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text("Lower ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-                        Text("12.23", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Flexible(
+                          child: Text(
+                            state.resistorModel4.minRange.toString(),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         Text("Upper ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-                        Text(
-                          "123.23 ",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        Flexible(
+                          child: Text(
+                            state.resistorModel4.maxRange.toString(),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),

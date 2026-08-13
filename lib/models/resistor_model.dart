@@ -10,6 +10,8 @@ class ResistorModel extends Equatable {
   final double resultValue;
   final String resultsymbol;
   final String resultpercentage;
+  final double minRange;
+  final double maxRange;
   const ResistorModel({
     required this.resistor0Index,
     required this.resistor1Index,
@@ -19,6 +21,8 @@ class ResistorModel extends Equatable {
     required this.resultValue,
     required this.resultsymbol,
     required this.resultpercentage,
+    required this.maxRange,
+    required this.minRange,
   });
 
   @override
@@ -31,6 +35,8 @@ class ResistorModel extends Equatable {
     resultValue,
     resultsymbol,
     resultpercentage,
+    minRange,
+    maxRange,
   ];
 
   ResistorModel copyWith({
@@ -42,6 +48,8 @@ class ResistorModel extends Equatable {
     double? resultValue,
     String? resultsymbol,
     String? resultpercentage,
+    double? minRange,
+    double? maxRange,
   }) {
     return ResistorModel(
       resistor0Index: resistor0Index ?? this.resistor0Index,
@@ -52,6 +60,8 @@ class ResistorModel extends Equatable {
       resultValue: resultValue ?? this.resultValue,
       resultsymbol: resultsymbol ?? this.resultsymbol,
       resultpercentage: resultpercentage ?? this.resultpercentage,
+      maxRange: maxRange ?? this.maxRange,
+      minRange: minRange ?? this.minRange,
     );
   }
 }

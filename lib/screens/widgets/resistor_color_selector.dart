@@ -48,7 +48,7 @@ class ResistorColorSelector extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           pContext.read<ResistorBloc>().add(
-                            SetResisterColors(position: position, index: i, isFour: isFour),
+                            SetResisterColors(position: position, index: i),
                           );
                           context.pop();
                         },
