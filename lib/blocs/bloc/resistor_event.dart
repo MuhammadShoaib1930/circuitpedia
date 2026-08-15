@@ -7,26 +7,19 @@ sealed class ResistorEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class SetResisterColors extends ResistorEvent {
-  final int position;
-  final int index;
-  final String symbol;
-  const SetResisterColors({this.position = -1, this.index = -1, this.symbol = "Ω"});
+class SetColors extends ResistorEvent {
+  final List<String> names;
+  const SetColors({required this.names});
 
   @override
-  List<Object> get props => [position, index, symbol];
+  List<Object> get props => [names];
 }
 
-final class SetPersentage extends ResistorEvent {
+class SetIndexColors extends ResistorEvent {
   final int index;
-  const SetPersentage(this.index);
-  @override
-  List<Object> get props => [index];
-}
+  final String name;
+  const SetIndexColors({required this.index, required this.name});
 
-final class SetValueColors extends ResistorEvent {
-  final double value;
-  const SetValueColors(this.value);
   @override
-  List<Object> get props => [value];
+  List<Object> get props => [index, name];
 }

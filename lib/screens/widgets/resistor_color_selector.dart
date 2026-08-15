@@ -1,28 +1,42 @@
 import 'package:circuitpedia/blocs/bloc/resistor_bloc.dart';
-import 'package:circuitpedia/logic/resistor_logcs.dart';
+import 'package:circuitpedia/logic/resistor_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ResistorColorSelector extends StatelessWidget {
-  ResistorColorSelector({
+  final String oldColor;
+  final BuildContext blocContext;
+  final int index;
+  final int band;
+  const ResistorColorSelector({
     super.key,
-    required this.oldIndex,
-    required this.pContext,
-    required this.position,
-    required this.isFour,
-    this.isPersentage = false,
-    this.isPower = false,
-    this.isValue = false,
+    required this.oldColor,
+    required this.blocContext,
+    required this.index,
+    required this.band,
   });
-  final ResistorLogcs resistorLogcs = ResistorLogcs();
-  final int oldIndex;
-  final BuildContext pContext;
-  final int position;
-  final bool isFour;
-  final bool isPersentage;
-  final bool isPower;
-  final bool isValue;
+  bool isShowColor(String name, int i) {
+    if ((name == "Silver" || name == "Gold") && (i == 0 || i == 1)) {
+      return false;
+    } else if (band == 5 && (name == "Silver" || name == "Gold") && (i == 0 || i == 1 || i == 2)) {
+      return false;
+    }
+    if (name == "Black" ||
+        name == "Orange" ||
+        name == "Yellow" ||
+        name == "Grey" ||
+        name == "White") {
+      if (band == 4 && i == 3) {
+        return false;
+      } else if (band == 5 && i == 4) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -32,37 +46,28 @@ class ResistorColorSelector extends StatelessWidget {
           height: 500,
           child: GridView.builder(
             itemBuilder: (context, i) {
-              bool isShow = true;
-              if (isPersentage) {
-                if (i == 2 || i == 5 || i == 6 || i == 10 || i == 11) {
-                  isShow = false;
-                }
-              }
-              if (isValue) {
-                if (i == 0 || i == 1) {
-                  isShow = false;
-                }
-              }
-              return (isShow)
+              final List<String> keys = ResistorData.colors.keys.toList();
+
+              return (isShowColor(keys[i], index))
                   ? SizedBox(
                       child: InkWell(
                         onTap: () {
-                          pContext.read<ResistorBloc>().add(
-                            SetResisterColors(position: position, index: i),
+                          blocContext.read<ResistorBloc>().add(
+                            SetIndexColors(index: index, name: keys[i]),
                           );
                           context.pop();
                         },
                         child: Card(
                           color: Colors.transparent,
                           shape: Border.all(
-                            color: (oldIndex == i) ? Colors.blue : Colors.black,
+                            color: (keys[i] == oldColor) ? Colors.blue : Colors.black,
                             width: 2,
                           ),
                           child: Container(
-                            color: Data.resistorColors[i],
+                            color: ResistorData.colors[keys[i]],
                             child: Center(
                               child: Text(
-                                Data.resistorNames[i],
+                                keys[i],
                                 style: TextStyle(
                                   color: (i == 2) ? Colors.white : Colors.black,
                                   fontSize: 24,
@@ -78,7 +83,7 @@ class ResistorColorSelector extends StatelessWidget {
                   : SizedBox();
             },
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-            itemCount: Data.resistorNames.length,
+            itemCount: ResistorData.colors.length,
           ),
         ),
       ),

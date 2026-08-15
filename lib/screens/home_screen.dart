@@ -1,3 +1,4 @@
+import 'package:circuitpedia/core/constants/app_icons.dart';
 import 'package:circuitpedia/core/routes/app_routes.dart';
 import 'package:circuitpedia/screens/widgets/app_button.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class HomeScreen extends StatelessWidget {
             children: [
 
                  AppButton(
-                  imgPath: "",
+                  imgPath: AppIcons.resistorIcons,
                   name: "Resistance",
                   namePage: AppRoutes.resistanceScreen,
                 ),

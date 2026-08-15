@@ -1,178 +1,445 @@
-import 'package:circuitpedia/models/resistor_model.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
-
-class Data {
-  static final List<String> resistorNames = [
-    "Silver",
-    "Gold",
-    "Black",
-    "Brown",
-    "Red",
-    "Orange",
-    "Yellow",
-    "Green",
-    "Blue",
-    "Violet",
-    "Grey",
-    "White",
-    "None",
-  ];
-  static final List<Color> resistorColors = [
-    const Color(0xFFC0C0C0),
-    const Color(0xFFD4AF37),
-    const Color(0xFF000000),
-    Color(0xFF8B4513),
-    const Color(0xFFE53935),
-    const Color(0xFFFF9800),
-    const Color(0xFFFFEB3B),
-    const Color(0xFF4CAF50),
-    const Color(0xFF2196F3),
-    const Color(0xFF8E24AA),
-    const Color(0xFF757575),
-    const Color(0xFFFFFFFF),
-    Colors.transparent,
-  ];
-  static final List<double> resistorValues = [0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-  static final List<double> resistorPower = [
-    0.01,
-    0.1,
-    1,
-    1e1,
-    1e2,
-    1e3,
-    1e4,
-    1e5,
-    1e6,
-    1e7,
-    1e8,
-    1e9,
-    1,
-  ];
-
-  static final Map<int, String> resistorPersentage = {
-    0: "±10%",
-    1: "±5%",
-    3: "±1%",
-    4: "±2%",
-    7: "±0.5%",
-    8: "±0.25%",
-    9: "±0.1%",
-    12: "±20%",
-  };
-
-  static final Map<String, double> symbolToUnits = {
-    'pΩ': 1e12,
-    'nΩ': 1e9,
-    'μΩ': 1e6,
-    'mΩ': 1e3,
-    'Ω': 1,
-    'kΩ': 1e3,
-    'MΩ': 1e6,
-    'GΩ': 1e9,
-    'TΩ': 1e12,
-  };
-  static final Map<String, String> symbolToName = {
-    'pΩ': "Pico",
-    'nΩ': "Nano",
-    'μΩ': "Micro",
-    'mΩ': "Milli",
-    'Ω': "Ohme",
-    'kΩ': "Kilo",
-    'MΩ': "Mega",
-    'GΩ': "Giga",
-    'TΩ': "Tera",
-  };
-}
+import 'resistor_data.dart';
 
 class ResistorLogcs {
-  ResistorModel colorToValue({
-    required ResistorModel resistorModel,
-    int index = -1,
-    int position = -1,
-    String symbol = "Ω",
+  ResistorLogcs._();
+
+  // ============================================================
+  // COLOR → INFORMATION
+  // ============================================================
+
+  static Color? color(String name) {
+    return ResistorData.colors[name];
+  }
+
+  static int? digit(String name) {
+    return ResistorData.values[name];
+  }
+
+  static double? multiplier(String name) {
+    return ResistorData.powers[name];
+  }
+
+  String? _tolerance(String name) {
+    return ResistorData.percentages[name];
+  }
+
+  // ============================================================
+  // INFORMATION → COLOR
+  // ============================================================
+
+  static String? colorFromDigit(int digit) {
+    return ResistorData.nameFromValue(digit);
+  }
+
+  static String? colorFromMultiplier(double multiplier) {
+    return ResistorData.nameFromPower(multiplier);
+  }
+
+  static String? colorFromTolerance(String tolerance) {
+    return ResistorData.nameFromPercentage(tolerance);
+  }
+
+  static String? colorFromColor(Color color) {
+    return ResistorData.nameFromColor(color);
+  }
+
+  // ============================================================
+  // 4-BAND RESISTOR
+  //
+  // Band 1 = first digit
+  // Band 2 = second digit
+  // Band 3 = multiplier
+  // Band 4 = tolerance
+  //
+  // Example:
+  // Brown - Black - Red - Gold
+  // 1 0 × 100 = 1000Ω ±5%
+  // ============================================================
+
+  double _fourBandValue({required String band1, required String band2, required String band3}) {
+    final first = digit(band1);
+    final second = digit(band2);
+    final multiplierValue = multiplier(band3);
+
+    if (first == null || second == null || multiplierValue == null) {
+      throw ArgumentError("Invalid resistor color");
+    }
+
+    return (first * 10 + second) * multiplierValue;
+  }
+
+  String? _fourBandTolerance(String band4) {
+    return ResistorLogcs._()._tolerance(band4);
+  }
+
+  // ============================================================
+  // 5-BAND RESISTOR
+  //
+  // Band 1 = first digit
+  // Band 2 = second digit
+  // Band 3 = third digit
+  // Band 4 = multiplier
+  // Band 5 = tolerance
+  //
+  // Example:
+  // Brown - Black - Black - Red - Gold
+  //
+  // 100 × 100 = 10000Ω ±5%
+  // ============================================================
+
+  double _fiveBandValue({
+    required String band1,
+    required String band2,
+    required String band3,
+    required String band4,
   }) {
-    List<int> data = [
-      resistorModel.resistor0Index,
-      resistorModel.resistor1Index,
-      resistorModel.resistor2Index,
-      resistorModel.resistor3Index,
+    final first = digit(band1);
+    final second = digit(band2);
+    final third = digit(band3);
+    final multiplierValue = multiplier(band4);
+
+    if (first == null || second == null || third == null || multiplierValue == null) {
+      throw ArgumentError("Invalid resistor color");
+    }
+
+    return (first * 100 + second * 10 + third) * multiplierValue;
+  }
+
+  String? _fiveBandTolerance(String band5) {
+    return ResistorLogcs._()._tolerance(band5);
+  }
+  // ============================================================
+  // COLORS → COMPLETE RESISTOR VALUE
+  // ============================================================
+
+  double _valueFromColors(List<String> bands) {
+    if (bands.length == 4) {
+      return _fourBandValue(band1: bands[0], band2: bands[1], band3: bands[2]);
+    }
+
+    if (bands.length == 5) {
+      return _fiveBandValue(band1: bands[0], band2: bands[1], band3: bands[2], band4: bands[3]);
+    }
+
+    throw ArgumentError("Resistor must have 4, 5 or 6 bands");
+  }
+
+  // ============================================================
+  // COLORS → TOLERANCE
+  // ============================================================
+
+  static String? _toleranceFromColors(List<String> bands) {
+    if (bands.length < 4) {
+      return null;
+    }
+
+    return ResistorLogcs._()._tolerance(bands[bands.length - 1]);
+  }
+
+  // ============================================================
+  // COLORS → COMPLETE RESULT
+  // ============================================================
+
+  static Map<String, dynamic> calculateFromColors(List<String> bands) {
+    final value = ResistorLogcs._()._valueFromColors(bands);
+    final resistorTolerance = _toleranceFromColors(bands);
+
+    return {"value": value, "tolerance": resistorTolerance, "bands": bands};
+  }
+
+  // ============================================================
+  // RESISTOR VALUE → DIGITS
+  // ============================================================
+
+  static List<int> digitsFromValue(double value) {
+    if (value <= 0) {
+      throw ArgumentError("Value must be greater than 0");
+    }
+
+    final text = value.toString();
+
+    final parts = text.split('.');
+
+    final integerPart = parts[0];
+    final decimalPart = parts.length > 1 ? parts[1] : "";
+
+    final digits = [
+      ...integerPart.split('').map(int.parse),
+      ...decimalPart.split('').map(int.parse),
     ];
-    if (position != -1 && index != -1) {
-      data[position] = index;
+
+    while (digits.length > 1 && digits.last == 0) {
+      digits.removeLast();
     }
-    double result =
-        (Data.resistorValues[data[0]] * 10 + Data.resistorValues[data[1]]) *
-        Data.resistorPower[data[2]];
-    if (symbol == "pΩ" || symbol == "nΩ" || symbol == "μΩ" || symbol == "mΩ") {
-      result *= Data.symbolToUnits[symbol]!;
-    } else if (symbol == "kΩ" || symbol == "MΩ" || symbol == "GΩ" || symbol == "TΩ") {
-      result /= Data.symbolToUnits[symbol]!;
+
+    return digits;
+  }
+
+  // ============================================================
+  // VALUE → MULTIPLIER
+  //
+  // Example:
+  //
+  // 1000Ω
+  // → digits 10
+  // → multiplier 100
+  // → colors Brown Black Red
+  // ============================================================
+
+  static Map<String, dynamic> valueToParts(double value, {int bands = 4}) {
+    if (value <= 0) {
+      throw ArgumentError("Value must be greater than 0");
     }
-    String percentage = Data.resistorPersentage[data[3]] ?? "";
-    return resistorModel.copyWith(
-      resistor0Index: data[0],
-      resistor1Index: data[1],
-      resistor2Index: data[2],
-      resistor3Index: data[3],
-      resultValue: result,
-      resultsymbol: symbol,
-      resultpercentage: percentage,
-    );
+
+    if (bands != 4 && bands != 5) {
+      throw ArgumentError("Bands must be 4 or 5");
+    }
+
+    final requiredDigits = bands == 4 ? 2 : 3;
+
+    int exponent = 0;
+    double normalized = value;
+
+    while (normalized >= math.pow(10, requiredDigits)) {
+      normalized /= 10;
+      exponent++;
+    }
+
+    while (normalized < math.pow(10, requiredDigits - 1)) {
+      normalized *= 10;
+      exponent--;
+    }
+
+    final digits = normalized.round();
+
+    final digitString = digits.toString();
+
+    final digitList = digitString.split('').map(int.parse).toList();
+
+    final multiplierValue = math.pow(10, exponent);
+
+    return {"digits": digitList, "multiplier": multiplierValue, "exponent": exponent};
   }
 
-  double _percentageToDouble(String percentage) {
-    return double.parse(percentage.replaceAll(RegExp(r'[±%]'), ""));
-  }
+  // ============================================================
+  // VALUE → COLORS
+  //
+  // Example:
+  //
+  // 1000Ω
+  //
+  // → Brown
+  // → Black
+  // → Red
+  // ============================================================
 
-  (double, double) getMinMax(double value, String percentage) {
-    double tolerance = value * (_percentageToDouble(percentage) / 100);
-    return (value - tolerance, value + tolerance);
-  }
+  static List<String> colorsFromValue(double value, {int bands = 4}) {
+    final parts = valueToParts(value, bands: bands);
 
-  int getValue(List<double> values, double value) {
-    for (int i = 0; i < values.length; i++) {
-      if (values[i] == value) {
-        return i;
+    final digits = parts["digits"] as List<int>;
+    final multiplierValue = parts["multiplier"] as double;
+
+    final result = <String>[];
+
+    for (final d in digits) {
+      final name = colorFromDigit(d);
+
+      if (name == null) {
+        throw ArgumentError("No resistor color for digit $d");
       }
+
+      result.add(name);
     }
-    return -1;
+
+    final multiplierColor = colorFromMultiplier(multiplierValue);
+
+    if (multiplierColor == null) {
+      throw ArgumentError("No resistor color for multiplier $multiplierValue");
+    }
+
+    result.add(multiplierColor);
+
+    return result;
   }
 
-  ResistorModel valueToColors({required double value, required ResistorModel model}) {
-    double resultValue = model.resultValue;
-    if (value >= 0.0 && value <= 9.9) {
-      String v = (("$value").replaceAll(".", ""));
-      int v1 = getValue(Data.resistorValues, double.parse(v[v.length - 1]));
-      int v2 = getValue(Data.resistorValues, double.parse(v[v.length - 2]));
-      int v3 = (value < 1) ? 0 : 1;
+  // ============================================================
+  // VALUE + TOLERANCE → COLORS
+  // ============================================================
 
-      return model.copyWith(
-        resistor0Index: v1,
-        resistor1Index: v2,
-        resistor2Index: v3,
-        resultValue: resultValue,
-        resultpercentage: model.resultpercentage,
-        resultsymbol: model.resultsymbol,
-      );
+  static List<String> colorsFromValueAndTolerance(
+    double value,
+    String toleranceValue, {
+    int bands = 4,
+  }) {
+    final colors = colorsFromValue(value, bands: bands);
+
+    final toleranceColor = colorFromTolerance(toleranceValue);
+
+    if (toleranceColor == null) {
+      throw ArgumentError("Invalid tolerance: $toleranceValue");
     }
-    double minV = 0, maxV = 0;
-    (minV, maxV) = getMinMax(value, model.resultpercentage);
-    double digits = double.parse("1e${value.toInt().toString().substring(2).length}");
-    double r1 = (int.parse((minV).toString()[0]) * 10 + int.parse((minV).toString()[1])) * digits;
-    double r2 = (int.parse((maxV).toString()[0]) * 10 + int.parse((maxV).toString()[1])) * digits;
-    double result = 0;
-    if (r1 >= minV && r1 <= maxV) {
-      result = r1;
-    } else {
-      result = r2;
+
+    colors.add(toleranceColor);
+
+    return colors;
+  }
+
+  // ============================================================
+  // RESISTOR RANGE FROM TOLERANCE
+  // ============================================================
+
+  static Map<String, double> toleranceRange({
+    required double value,
+    required String toleranceValue,
+  }) {
+    final percent = _percentageNumber(toleranceValue);
+
+    final amount = value * percent / 100;
+
+    return {"minimum": value - amount, "maximum": value + amount};
+  }
+
+  static double _percentageNumber(String toleranceValue) {
+    final clean = toleranceValue.replaceAll("±", "").replaceAll("%", "");
+
+    final value = double.tryParse(clean);
+
+    if (value == null) {
+      throw ArgumentError("Invalid tolerance: $toleranceValue");
     }
-    return model.copyWith(
-      resistor0Index: getValue(Data.resistorValues, double.parse(result.toString()[0])),
-      resistor1Index: getValue(Data.resistorValues, double.parse(result.toString()[1])),
-      resistor3Index: getValue(Data.resistorPower, double.parse(result.toString()[2])),
-      resultValue: resultValue,
-      resultpercentage: model.resultpercentage,
-      resultsymbol: model.resultsymbol,
-    );
+
+    return value;
+  }
+
+  // ============================================================
+  // CHECK VALID RESISTOR COLOR
+  // ============================================================
+
+  static bool isValidColor(String name) {
+    return ResistorData.colors.containsKey(name);
+  }
+
+  // ============================================================
+  // CHECK VALID DIGIT
+  // ============================================================
+
+  static bool isValidDigit(int value) {
+    return value >= 0 && value <= 9;
+  }
+
+  // ============================================================
+  // CHECK VALID TOLERANCE
+  // ============================================================
+
+  static bool isValidTolerance(String value) {
+    return ResistorData.percentages.containsValue(value);
+  }
+
+  // ============================================================
+  // ALL COLOR NAMES
+  // ============================================================
+
+  static List<String> get allColors {
+    return ResistorData.colors.keys.toList();
+  }
+
+  // ============================================================
+  // ALL TOLERANCES
+  // ============================================================
+
+  static List<String> get allTolerances {
+    return ResistorData.percentages.values.toSet().toList();
+  }
+
+  // ============================================================
+  // OHM UNIT CONVERSION
+  // ============================================================
+
+  static double convertUnit({required double value, required String from, required String to}) {
+    final fromFactor = ResistorData.unitFactors[from];
+
+    final toFactor = ResistorData.unitFactors[to];
+
+    if (fromFactor == null || toFactor == null) {
+      throw ArgumentError("Invalid unit");
+    }
+
+    final ohms = value * fromFactor;
+
+    return ohms / toFactor;
+  }
+
+  // ============================================================
+  // OHMS → UNIT
+  // ============================================================
+
+  static double toUnit({required double ohms, required String unit}) {
+    final factor = ResistorData.unitFactors[unit];
+
+    if (factor == null) {
+      throw ArgumentError("Invalid unit: $unit");
+    }
+
+    return ohms / factor;
+  }
+
+  // ============================================================
+  // UNIT → OHMS
+  // ============================================================
+
+  static double fromUnit({required double value, required String unit}) {
+    final factor = ResistorData.unitFactors[unit];
+
+    if (factor == null) {
+      throw ArgumentError("Invalid unit: $unit");
+    }
+
+    return value * factor;
+  }
+
+  // ============================================================
+  // FORMAT RESISTOR VALUE
+  // ============================================================
+
+  static String formatValue(double ohms) {
+    if (ohms >= 1e12) {
+      return "${_removeZeros(ohms / 1e12)} TΩ";
+    }
+
+    if (ohms >= 1e9) {
+      return "${_removeZeros(ohms / 1e9)} GΩ";
+    }
+
+    if (ohms >= 1e6) {
+      return "${_removeZeros(ohms / 1e6)} MΩ";
+    }
+
+    if (ohms >= 1e3) {
+      return "${_removeZeros(ohms / 1e3)} kΩ";
+    }
+
+    if (ohms < 1e-9) {
+      return "${_removeZeros(ohms / 1e-12)} pΩ";
+    }
+
+    if (ohms < 1e-6) {
+      return "${_removeZeros(ohms / 1e-9)} nΩ";
+    }
+
+    if (ohms < 1e-3) {
+      return "${_removeZeros(ohms / 1e-6)} μΩ";
+    }
+
+    if (ohms < 1) {
+      return "${_removeZeros(ohms / 1e-3)} mΩ";
+    }
+
+    return "${_removeZeros(ohms)} Ω";
+  }
+
+  static String _removeZeros(double value) {
+    return value.toStringAsFixed(10).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 }

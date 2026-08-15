@@ -16,11 +16,19 @@ class AppButton extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push(namePage),
         child: Card(
+          
           child: Column(
-            spacing: 10,
+            spacing: 1,
             children: [
-              CircleAvatar(backgroundColor: Colors.blue, minRadius: 60.r),
-              Center(child: Text(name,style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
+              CircleAvatar(
+                backgroundColor: Colors.blue,
+                minRadius: 65.r,
+                backgroundImage: AssetImage(imgPath),
+
+              ),
+              Center(
+                child: Text(name, style: TextStyle(fontSize: 22, fontWeight: FontWeight.normal)),
+              ),
             ],
           ),
         ),
