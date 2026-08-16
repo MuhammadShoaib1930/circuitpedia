@@ -5,6 +5,7 @@ import 'package:circuitpedia/screens/smd_screen.dart';
 import 'package:circuitpedia/screens/transformer_screen.dart';
 import 'package:circuitpedia/screens/ups_screen.dart';
 import 'package:circuitpedia/screens/widgets/resistor_widget.dart';
+import 'package:circuitpedia/screens/widgets/resistor_widget_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class AppRoutes {
 
   // widget Navigator names
   static const String resistorWidget = "/resistor_widget";
+  static const String resistorWidgetValue = "/resistor_widget_value";
 
   static GoRouter routes = GoRouter(
     initialLocation: homeScreen,
@@ -43,6 +45,15 @@ class AppRoutes {
           return BlocProvider(
             create: (context) => ResistorBloc(),
             child: ResistorWidget(band: state.extra as int),
+          );
+        },
+      ),
+      GoRoute(
+        path: resistorWidgetValue,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => ResistorBloc(),
+            child: ResistorWidgetValue(band: state.extra as int),
           );
         },
       ),

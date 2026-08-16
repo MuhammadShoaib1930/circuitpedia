@@ -12,8 +12,9 @@ class ResistorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle textStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
     return Scaffold(
-      appBar: AppBar(title: Text("Resistor"), centerTitle: true),
+      appBar: AppBar(title: Text("Resistor value from colors"), centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -21,7 +22,12 @@ class ResistorWidget extends StatelessWidget {
             builder: (blocContext, state) {
               int n = state.names.length;
               return Column(
+                spacing: 20.r,
                 children: [
+                  Text("Value = ${state.result} ${state.tolerance}", style: textStyle),
+                  Text("Or = ${state.formatValue}", style: textStyle),
+                  Text("Minimum Range = ${state.minimum}", style: textStyle),
+                  Text("Maximum Range = ${state.maximum}", style: textStyle),
                   SizedBox(
                     width: 350.w,
                     height: 350.h,
@@ -174,10 +180,6 @@ class ResistorWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Text("${state.result} ${state.tolerance}"),
-                  Text(state.formatValue),
-                  Text("${state.minimum}"),
-                  Text(" ${state.maximum}"),
                 ],
               );
             },

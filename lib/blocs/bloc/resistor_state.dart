@@ -5,8 +5,10 @@ class ResistorState extends Equatable {
   final double result;
   final String tolerance;
   final String formatValue;
-  final double minimum;
-  final double maximum;
+
+  final String minimum;
+  final String maximum;
+
   const ResistorState({
     required this.names,
     required this.result,
@@ -16,5 +18,12 @@ class ResistorState extends Equatable {
     required this.minimum,
   });
   @override
-  List<Object> get props => [names, result, tolerance, formatValue, minimum, maximum];
+  List<Object> get props => [
+    names,
+    result,
+    tolerance,
+    formatValue,
+    minimum,
+    maximum,
+  ];
 }

@@ -10,13 +10,18 @@ part 'resistor_state.dart';
 class ResistorBloc extends Bloc<ResistorEvent, ResistorState> {
   ResistorBloc()
     : super(
-        ResistorState(names: [], result: 0, tolerance: "", formatValue: "", maximum: 0, minimum: 0),
+        ResistorState(
+          names: [],
+          result: 0,
+          tolerance: "",
+          formatValue: "",
+          maximum: "",
+          minimum: "",
+        ),
       ) {
-    on<SetColors>(_setColors);
+    on<ColorsFromValue>(_colorsFormValue);
     on<SetIndexColors>(_setIndexColors);
   }
-
-  FutureOr<void> _setColors(SetColors event, Emitter<ResistorState> emit) {}
 
   FutureOr<void> _setIndexColors(SetIndexColors event, Emitter<ResistorState> emit) {
     List<String> s = [...state.names];
@@ -26,7 +31,7 @@ class ResistorBloc extends Bloc<ResistorEvent, ResistorState> {
       s.add(event.name);
     }
     emit(
-      ResistorState(names: s, result: 0, tolerance: "", formatValue: "", maximum: 0, minimum: 0),
+      ResistorState(names: s, result: 0, tolerance: "", formatValue: "", maximum: "", minimum: ""),
     );
     if (s.length > 3) {
       Map<String, dynamic> map = ResistorLogcs.calculateFromColors(s);
@@ -39,11 +44,36 @@ class ResistorBloc extends Bloc<ResistorEvent, ResistorState> {
           names: map["bands"],
           result: map["value"],
           tolerance: map["tolerance"],
-          formatValue: ResistorLogcs.formatValue( map["value"]),
-          minimum: tol["minimum"] ?? 0,
-          maximum: tol["maximum"] ?? 0,
+          formatValue: ResistorLogcs.formatValue(map["value"]),
+          minimum: ResistorLogcs.formatValue(tol["minimum"] ?? 0),
+          maximum: ResistorLogcs.formatValue(tol["maximum"] ?? 0),
         ),
       );
     }
+  }
+
+  FutureOr<void> _colorsFormValue(ColorsFromValue event, Emitter<ResistorState> emit) {
+
+    double value = double.parse(event.value);
+    final List<String> names = ResistorLogcs.colorsFromValueAndTolerance(
+      double.parse(event.value),
+      event.tolerance,
+      bands: event.band,
+    );
+
+    final Map<String, double> tol = ResistorLogcs.toleranceRange(
+      value: value,
+      toleranceValue: event.tolerance,
+    );
+    emit(
+      ResistorState(
+        names: names,
+        result: value,
+        tolerance: event.tolerance,
+        formatValue: ResistorLogcs.formatValue(value),
+        minimum: ResistorLogcs.formatValue(tol["minimum"] ?? 0),
+        maximum: ResistorLogcs.formatValue(tol["maximum"] ?? 0),
+      ),
+    );
   }
 }

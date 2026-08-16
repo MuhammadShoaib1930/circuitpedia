@@ -17,8 +17,10 @@ class ResistorsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 15,
             children: [
               SizedBox(width: double.infinity.w),
+              Text("Value from colors.",style: textStyle,),
               ElevatedButton(
                 onPressed: () {
                   context.push(AppRoutes.resistorWidget, extra: 4);
@@ -28,6 +30,20 @@ class ResistorsScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   context.push(AppRoutes.resistorWidget, extra: 5);
+                },
+                child: Text("5 band", style: textStyle),
+              ),
+              SizedBox(height: 10,),
+              Text("Colors from value.",style: textStyle,),
+              ElevatedButton(
+                onPressed: () {
+                  context.push(AppRoutes.resistorWidgetValue, extra: 4);
+                },
+                child: Text("4 band", style: textStyle),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.push(AppRoutes.resistorWidgetValue, extra: 5);
                 },
                 child: Text("5 band", style: textStyle),
               ),

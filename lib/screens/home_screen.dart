@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: AppDrawer(),
-      appBar: AppBar(title: Text("Games")),
+      appBar: AppBar(title: Text("Electronic")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12.0),

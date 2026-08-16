@@ -218,9 +218,9 @@ class ResistorLogcs {
 
     final digitList = digitString.split('').map(int.parse).toList();
 
-    final multiplierValue = math.pow(10, exponent);
+    final  multiplierValue = math.pow(10, exponent);
 
-    return {"digits": digitList, "multiplier": multiplierValue, "exponent": exponent};
+    return {"digits": digitList, "multiplier": multiplierValue.toDouble(), "exponent": exponent};
   }
 
   // ============================================================
@@ -239,10 +239,8 @@ class ResistorLogcs {
     final parts = valueToParts(value, bands: bands);
 
     final digits = parts["digits"] as List<int>;
-    final multiplierValue = parts["multiplier"] as double;
-
+    final multiplierValue = (parts["multiplier"]) as double;
     final result = <String>[];
-
     for (final d in digits) {
       final name = colorFromDigit(d);
 
