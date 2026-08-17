@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ResistorData {
-  // ============================================================
-  // RESISTOR COLORS
-  // ============================================================
-
   static const Map<String, Color> colors = {
     "Silver": Color(0xFFC0C0C0),
     "Gold": Color(0xFFD4AF37),
@@ -20,10 +16,7 @@ class ResistorData {
     "White": Color(0xFFFFFFFF),
     "None": Colors.transparent,
   };
-
   static const Map<String, int> values = {
-    "Silver": 0,
-    "Gold": 0,
     "Black": 0,
     "Brown": 1,
     "Red": 2,
@@ -64,31 +57,6 @@ class ResistorData {
     "None": "±20%",
   };
 
-  // ============================================================
-  // NAME → DATA
-  // ============================================================
-
-  static Color? colorFromName(String name) => colors[name];
-
-  static int? valueFromName(String name) => values[name];
-
-  static double? powerFromName(String name) => powers[name];
-
-  static String? percentageFromName(String name) => percentages[name];
-
-  // ============================================================
-  // DATA → NAME
-  // ============================================================
-
-  static String? nameFromColor(Color color) {
-    for (final entry in colors.entries) {
-      if (entry.value == color) {
-        return entry.key;
-      }
-    }
-    return null;
-  }
-
   static String? nameFromValue(int value) {
     for (final entry in values.entries) {
       if (entry.value == value) {
@@ -116,10 +84,6 @@ class ResistorData {
     return null;
   }
 
-  // ============================================================
-  // OHM UNITS
-  // ============================================================
-
   static const Map<String, double> unitFactors = {
     'pΩ': 1e-12,
     'nΩ': 1e-9,
@@ -143,34 +107,4 @@ class ResistorData {
     'GΩ': "Giga",
     'TΩ': "Tera",
   };
-
-  // ============================================================
-  // UNIT → DATA
-  // ============================================================
-
-  static double? factorFromUnit(String unit) => unitFactors[unit];
-
-  static String? nameFromUnit(String unit) => unitNames[unit];
-
-  // ============================================================
-  // DATA → UNIT
-  // ============================================================
-
-  static String? unitFromName(String name) {
-    for (final entry in unitNames.entries) {
-      if (entry.value == name) {
-        return entry.key;
-      }
-    }
-    return null;
-  }
-
-  static String? unitFromFactor(double factor) {
-    for (final entry in unitFactors.entries) {
-      if (entry.value == factor) {
-        return entry.key;
-      }
-    }
-    return null;
-  }
 }

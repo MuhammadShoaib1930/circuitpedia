@@ -1,4 +1,4 @@
-import 'package:circuitpedia/blocs/bloc/resistor_bloc.dart';
+import 'package:circuitpedia/blocs/resistor/resistor_bloc.dart';
 import 'package:circuitpedia/logic/resistor_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

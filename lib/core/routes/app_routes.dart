@@ -1,10 +1,11 @@
-import 'package:circuitpedia/blocs/bloc/resistor_bloc.dart';
+import 'package:circuitpedia/blocs/capacitor/capacitor_bloc.dart';
+import 'package:circuitpedia/blocs/resistor/resistor_bloc.dart';
 import 'package:circuitpedia/screens/capacitor_screen.dart';
 import 'package:circuitpedia/screens/resistors_screen.dart';
 import 'package:circuitpedia/screens/smd_screen.dart';
 import 'package:circuitpedia/screens/transformer_screen.dart';
 import 'package:circuitpedia/screens/ups_screen.dart';
-import 'package:circuitpedia/screens/widgets/resistor_widget.dart';
+import 'package:circuitpedia/screens/widgets/resistor_widget_color.dart';
 import 'package:circuitpedia/screens/widgets/resistor_widget_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +34,11 @@ class AppRoutes {
       // screen Navigator
       GoRoute(path: homeScreen, builder: (context, state) => HomeScreen()),
       GoRoute(path: resistanceScreen, builder: (context, state) => ResistorsScreen()),
-      GoRoute(path: capacitorScreen, builder: (context, state) => CapacitorScreen()),
+      GoRoute(
+        path: capacitorScreen,
+        builder: (context, state) =>
+            BlocProvider(create: (context) => CapacitorBloc(), child: CapacitorScreen()),
+      ),
       GoRoute(path: smdScreen, builder: (context, state) => SmdScreen()),
       GoRoute(path: transformerScreen, builder: (context, state) => TransformerScreen()),
       GoRoute(path: upsScreen, builder: (context, state) => UpsScreen()),
@@ -44,7 +49,7 @@ class AppRoutes {
         builder: (context, state) {
           return BlocProvider(
             create: (context) => ResistorBloc(),
-            child: ResistorWidget(band: state.extra as int),
+            child: ResistorWidgetColor(band: state.extra as int),
           );
         },
       ),

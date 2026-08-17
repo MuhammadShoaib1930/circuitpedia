@@ -1,5 +1,4 @@
-import 'package:circuitpedia/blocs/bloc/resistor_bloc.dart';
-import 'package:circuitpedia/logic/resistor_data.dart';
+import 'package:circuitpedia/blocs/resistor/resistor_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:circuitpedia/core/constants/app_icons.dart';
@@ -87,47 +86,55 @@ class ResistorWidgetValue extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: valueController,
-                      style: textStyle,
+                  SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          child: TextFormField(
+                            controller: valueController,
+                            style: textStyle,
 
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.r)),
-                      ),
-                      maxLength: 11,
-                      onChanged: (value) {
-                        if (double.parse(value) > 0) {
-                          context.read<ResistorBloc>().add(
-                            ColorsFromValue(
-                              value: valueController.text.toString(),
-                              tolerance: tolerance ?? ResistorLogcs.allTolerances[0],
-                              band: band,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.r)),
                             ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  DropdownMenu(
-                    dropdownMenuEntries: ResistorLogcs.allTolerances.map((e) {
-                      return DropdownMenuEntry(value: e, label: e);
-                    }).toList(),
-                    initialSelection: ResistorLogcs.allTolerances[0],
-
-                    onSelected: (value) {
-                      if (double.parse(valueController.text.toString()) > 0) {
-                        context.read<ResistorBloc>().add(
-                          ColorsFromValue(
-                            value: valueController.text.toString(),
-                            tolerance: value ?? ResistorLogcs.allTolerances[0],
-                            band: band,
+                            maxLength: 11,
+                            onChanged: (String value) {
+                              if (value.isNotEmpty && double.parse(value) > 0) {
+                                context.read<ResistorBloc>().add(
+                                  ColorsFromValue(
+                                    value: valueController.text.toString(),
+                                    tolerance: tolerance ?? ResistorLogcs.allTolerances[0],
+                                    band: band,
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                        );
-                      }
-                    },
+                        ),
+                        DropdownMenu(
+                          dropdownMenuEntries: ResistorLogcs.allTolerances.map((e) {
+                            return DropdownMenuEntry(value: e, label: e);
+                          }).toList(),
+                          initialSelection: ResistorLogcs.allTolerances[0],
+
+                          onSelected: (value) {
+                            String v = valueController.text.toString();
+                            if (v.isNotEmpty && double.parse(v) > 0) {
+                              context.read<ResistorBloc>().add(
+                                ColorsFromValue(
+                                  value: valueController.text.toString(),
+                                  tolerance: value ?? ResistorLogcs.allTolerances[0],
+                                  band: band,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
 
                   Text("Value = ${state.result} ${state.tolerance}", style: textStyle),

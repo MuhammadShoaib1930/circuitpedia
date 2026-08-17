@@ -17,42 +17,19 @@ class HomeScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: GridView(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 200 ),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 200),
 
             children: [
-
-                 AppButton(
-                  imgPath: AppIcons.resistorIcons,
-                  name: "Resistance",
-                  namePage: AppRoutes.resistanceScreen,
-                ),
-              // Expanded(
-              //   child: AppButton(
-              //     imgPath: "",
-              //     name: "Capacitor",
-              //     namePage: AppRoutes.resistanceScreen,
-              //   ),
-              // ),
-              // Expanded(
-              //   child: AppButton(imgPath: "", name: "SMD", namePage: AppRoutes.resistanceScreen),
-              // ),
-              // Expanded(
-              //   child: AppButton(
-              //     imgPath: "",
-              //     name: "Transformer",
-              //     namePage: AppRoutes.resistanceScreen,
-              //   ),
-              // ),
-              // Expanded(
-              //   child: AppButton(imgPath: "", name: "UPS", namePage: AppRoutes.resistanceScreen),
-              // ),
-              // Expanded(
-              //   child: AppButton(
-              //     imgPath: "",
-              //     name: "Circuts",
-              //     namePage: AppRoutes.resistanceScreen,
-              //   ),
-              // ),
+              AppButton(
+                imgPath: AppIcons.resistorIcons,
+                name: "Resistances",
+                namePage: AppRoutes.resistanceScreen,
+              ),
+              AppButton(
+                imgPath: AppIcons.capacitorIcons,
+                name: "Capacitors",
+                namePage: AppRoutes.capacitorScreen,
+              ),
             ],
           ),
         ),
