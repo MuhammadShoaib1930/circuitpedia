@@ -10,9 +10,8 @@ class CapacitorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? selected;
-    String? data;
-    TextStyle textStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w500);
+    TextStyle textStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.w500);
+    String symbol = "pF";
     return Scaffold(
       appBar: AppBar(title: Text("Capacitor"), centerTitle: true),
 
@@ -26,161 +25,110 @@ class CapacitorScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(width: double.infinity.w),
+
                     SizedBox(
                       width: 350.w,
                       height: 350.h,
                       child: Stack(
                         alignment: AlignmentGeometry.bottomCenter,
                         children: [
-                          Image.asset(AppIcons.ceramicIcons),
+                          SizedBox(
+                            width: 350.w,
+                            height: 350.h,
+                            child: Stack(
+                              alignment: AlignmentGeometry.topCenter,
+                              children: [Image.asset(AppIcons.polyesterIcons)],
+                            ),
+                          ),
                           Positioned(
-                            top: 80.r,
-                            left: 134.r,
-                            child: SizedBox(
-                              width: 70,
-                              height: 80,
-                              child: TextFormField(
-                                maxLength: 3,
-                                style: textStyle,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25.r),
+                            top: 0,
+                            left: 100.w,
+                            bottom: 1.h,
+                            child: Image.asset(AppIcons.ceramicIcons),
+                          ),
+                          Positioned(
+                            right: 40.w,
+                            top: 60.h,
+                            child: Text(state.code, style: textStyle),
+                          ),
+                          Positioned(
+                            left: 100.w,
+                            top: 120.h,
+                            child: Text(state.code, style: textStyle),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 150.r,
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        maxLength: 3,
+                        style: textStyle,
+                        decoration: InputDecoration(
+                          hintText: "101",
+                          labelText: "Enter Code.",
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                        ),
+
+                        onChanged: (value) {
+                          context.read<CapacitorBloc>().add(SetCode(data: value));
+                        },
+                      ),
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            spacing: 10,
+                            children: [
+                              SizedBox(
+                                width: 200.r,
+
+                                child: TextFormField(
+                                  style: textStyle,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: "1000",
+                                    labelText: "Enter Value.",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50.r),
+                                    ),
                                   ),
-                                ),
-                                onChanged: (value) {
-                                  if (value.isNotEmpty && value.length == 3) {
-                                    context.read<CapacitorBloc>().add(
-                                      CeramicCalculate(data: value, isCodeToValue: true),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          Text("Value = ${state.ceramicValue}", style: textStyle),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      child: TextFormField(
-                        style: textStyle,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
-                        ),
 
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            context.read<CapacitorBloc>().add(
-                              CeramicCalculate(data: value, isCodeToValue: false),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: 350.w,
-                      height: 350.h,
-                      child: Stack(
-                        alignment: AlignmentGeometry.bottomCenter,
-                        children: [
-                          Image.asset(AppIcons.polyesterIcons),
-                          Positioned(
-                            top: 140.r,
-                            left: 80.r,
-                            child: SizedBox(
-                              width: 80.r,
-                              height: 150.r,
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                maxLength: 3,
-                                style: textStyle,
-                                decoration: InputDecoration(border: OutlineInputBorder()),
-
-                                onChanged: (value) {
-                                  if (value.isNotEmpty && value.length == 3) {
-                                    context.read<CapacitorBloc>().add(
-                                      PolyesterCalculate(data: value, isCodeToValue: true),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          Text("Value = ${state.polyesterValue}", style: textStyle),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        style: textStyle,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
-                        ),
-
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            context.read<CapacitorBloc>().add(
-                              PolyesterCalculate(data: value, isCodeToValue: false),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    Text("Value to Code and Code to value", style: textStyle),
-                    SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            height: 60,
-                            child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              style: textStyle,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(50.r),
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
+                                      context.read<CapacitorBloc>().add(
+                                        SetValue(data: "$value $symbol"),
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
+                              SizedBox(
+                                child: DropdownMenu(
+                                  textStyle: textStyle,
+                                  dropdownMenuEntries: CapacitorLogics.units.keys.map((e) {
+                                    return DropdownMenuEntry(value: e, label: e);
+                                  }).toList(),
+                                  initialSelection: CapacitorLogics.units.keys.toList()[0],
 
-                              onChanged: (value) {
-                                if (double.parse(value) > 0) {
-                                  data = value;
-                                  if (selected != null) {
-                                    context.read<CapacitorBloc>().add(
-                                      ValueConvert(data: "$value $selected"),
-                                    );
-                                  }
-                                }
-                              },
-                            ),
+                                  onSelected: (value) {
+                                    if (state.value.isNotEmpty) {
+                                      context.read<CapacitorBloc>().add(
+                                        SetValue(data: "${state.value.split(" ")[0]} $value"),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            child: DropdownMenu(
-                              textStyle: textStyle,
-                              dropdownMenuEntries: CapacitorLogics.units.keys.map((e) {
-                                return DropdownMenuEntry(value: e, label: e);
-                              }).toList(),
-                              initialSelection: CapacitorLogics.units.keys.toList()[0],
-
-                              onSelected: (value) {
-                                if (value != null && value.isNotEmpty) {
-                                  selected = value;
-
-                                  if (data != null) {
-                                    context.read<CapacitorBloc>().add(
-                                      ValueConvert(data: "$data $value"),
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       child: Column(

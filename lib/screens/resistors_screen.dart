@@ -1,3 +1,4 @@
+import 'package:circuitpedia/core/constants/app_icons.dart';
 import 'package:circuitpedia/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,19 +9,16 @@ class ResistorsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = TextStyle(fontSize: 22, fontWeight: FontWeight.w100);
+    TextStyle textStyle = TextStyle(fontSize: 22);
     return Scaffold(
       appBar: AppBar(title: Text("Resistor")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 15,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               SizedBox(width: double.infinity.w),
-              Text("Value from colors.",style: textStyle,),
+              Text("Value from colors.", style: textStyle),
               ElevatedButton(
                 onPressed: () {
                   context.push(AppRoutes.resistorWidget, extra: 4);
@@ -33,8 +31,8 @@ class ResistorsScreen extends StatelessWidget {
                 },
                 child: Text("5 band", style: textStyle),
               ),
-              SizedBox(height: 10,),
-              Text("Colors from value.",style: textStyle,),
+              SizedBox(height: 10),
+              Text("Colors from value.", style: textStyle),
               ElevatedButton(
                 onPressed: () {
                   context.push(AppRoutes.resistorWidgetValue, extra: 4);
@@ -47,6 +45,14 @@ class ResistorsScreen extends StatelessWidget {
                 },
                 child: Text("5 band", style: textStyle),
               ),
+              Text("SMD Resistor", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              ElevatedButton(
+                onPressed: () {
+                  context.push(AppRoutes.smdResistorScreen, extra: 5);
+                },
+                child: Text("SMD Resistor", style: textStyle),
+              ),
+
             ],
           ),
         ),

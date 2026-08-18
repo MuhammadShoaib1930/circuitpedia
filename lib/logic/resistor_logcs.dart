@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'resistor_data.dart';
 
@@ -239,5 +240,69 @@ class ResistorLogcs {
 
   static String _removeZeros(double value) {
     return value.toStringAsFixed(10).replaceFirst(RegExp(r'\.?0+$'), '');
+  }
+}
+
+class SMDResistorLogic {
+  String codeToValue(String code) {
+    code = code.trim();
+    if (code == "0" || code == "00" || code == "000") {
+      return "0 Ω";
+    }
+    if (code.length <= 2) {
+      return "$code Ω";
+    } else if (code.length == 3) {
+      double firstTwo = double.parse(code.substring(0, 2));
+      double multiplier = double.parse(code.substring(2));
+
+      double value = firstTwo * pow(10, multiplier);
+
+      return ResistorLogcs.formatValue(value);
+    } else {
+      int firstThree = int.parse(code.substring(0, 3));
+      int multiplier = int.parse(code.substring(3));
+
+      int value = firstThree * pow(10, multiplier) as int;
+
+      return ResistorLogcs.formatValue(value.toDouble());
+    }
+  }
+
+  String valueToCode(String value) {
+    final parts = value.trim().split(RegExp(r'\s+'));
+
+    if (parts.length <= 2) {
+      return value.split(" ")[0];
+    }
+
+    double number = double.parse(parts[0]);
+    String unit = parts[1];
+    double ohms = number * ResistorData.unitFactors[unit]!;
+    if (ohms == 0) {
+      return "0";
+    }
+
+    return generateCode(ohms);
+  }
+
+  String generateCode(double ohms) {
+    print(ohms);
+    for (int multiplier = 0; multiplier <= 9; multiplier++) {
+      double significant = ohms / pow(10, multiplier);
+
+      if (significant >= 10 && significant <= 99 && significant == significant.roundToDouble()) {
+        return "${significant.toInt()}$multiplier";
+      }
+    }
+
+    for (int multiplier = 0; multiplier <= 9; multiplier++) {
+      double significant = ohms / pow(10, multiplier);
+
+      if (significant >= 100 && significant <= 999 && significant == significant.roundToDouble()) {
+        return "${significant.toInt()}$multiplier";
+      }
+    }
+
+    throw FormatException("Cannot represent $ohms Ω as a standard SMD code");
   }
 }

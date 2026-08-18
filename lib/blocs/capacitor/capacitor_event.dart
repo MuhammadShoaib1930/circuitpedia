@@ -7,25 +7,17 @@ sealed class CapacitorEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class CeramicCalculate extends CapacitorEvent {
+class SetCode extends CapacitorEvent {
   final String data;
-  final bool isCodeToValue;
-  const CeramicCalculate({required this.data, required this.isCodeToValue});
-  @override
-  List<Object> get props => [data, isCodeToValue];
-}
-
-class PolyesterCalculate extends CapacitorEvent {
-  final String data;
-  final bool isCodeToValue;
-  const PolyesterCalculate({required this.data, required this.isCodeToValue});
-  @override
-  List<Object> get props => [data, isCodeToValue];
-}
-
-class ValueConvert extends CapacitorEvent {
-  final String data;
-  const ValueConvert({required this.data});
+  const SetCode({required this.data});
   @override
   List<Object> get props => [data];
 }
+
+class SetValue extends CapacitorEvent {
+  final String data;
+  const SetValue({required this.data});
+  @override
+  List<Object> get props => [data];
+}
+

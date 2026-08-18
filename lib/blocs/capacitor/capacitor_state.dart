@@ -1,44 +1,21 @@
 part of 'capacitor_bloc.dart';
 
 class CapacitorState extends Equatable {
-  final String ceramicCode;
-  final String ceramicValue;
-  final String polyesterCode;
-  final String polyesterValue;
+  final String code;
   final String value;
   final List<String> toValue;
   const CapacitorState({
-    this.ceramicCode = "0",
-    this.ceramicValue = "0",
-    this.polyesterCode = "0",
-    this.polyesterValue = "0",
-    this.toValue = const ["0pf", "0pf", "0pf", "0pf", "0pf"],
-    this.value = "0",
+    this.code = "0",
+    this.value = "0 pF",
+    this.toValue = const ["0 pF", "0 pF", "0 pF", "0 pF", "0 pF"],
   });
 
   @override
-  List<Object> get props => [
-    ceramicCode,
-    ceramicValue,
-    polyesterCode,
-    polyesterValue,
-    toValue,
-    value,
-  ];
+  List<Object> get props => [code, toValue, value];
 
-  CapacitorState copyWith({
-    String? ceramicCode,
-    String? ceramicValue,
-    String? polyesterCode,
-    String? polyesterValue,
-    String? value,
-    List<String>? toValue,
-  }) {
+  CapacitorState copyWith({String? code, String? value, List<String>? toValue}) {
     return CapacitorState(
-      ceramicCode: ceramicCode ?? this.ceramicCode,
-      ceramicValue: ceramicValue ?? this.ceramicValue,
-      polyesterCode: polyesterCode ?? this.polyesterCode,
-      polyesterValue: polyesterValue ?? this.polyesterValue,
+      code: code ?? this.code,
       value: value ?? this.value,
       toValue: toValue ?? this.toValue,
     );

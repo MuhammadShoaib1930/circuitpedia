@@ -1,8 +1,9 @@
 import 'package:circuitpedia/blocs/capacitor/capacitor_bloc.dart';
 import 'package:circuitpedia/blocs/resistor/resistor_bloc.dart';
+import 'package:circuitpedia/blocs/smd_resistor/smd_resistor_bloc.dart';
 import 'package:circuitpedia/screens/capacitor_screen.dart';
 import 'package:circuitpedia/screens/resistors_screen.dart';
-import 'package:circuitpedia/screens/smd_screen.dart';
+import 'package:circuitpedia/screens/smd_resistor_screen.dart';
 import 'package:circuitpedia/screens/transformer_screen.dart';
 import 'package:circuitpedia/screens/ups_screen.dart';
 import 'package:circuitpedia/screens/widgets/resistor_widget_color.dart';
@@ -18,10 +19,10 @@ class AppRoutes {
   static const String homeScreen = "/home_screen";
   static const String resistanceScreen = "/resistance_screen";
   static const String capacitorScreen = "/capacitor_screen";
-  static const String smdScreen = "/smd_screen";
   static const String transformerScreen = "/transformer_screen";
   static const String upsScreen = "/ups_screen";
   static const String circutsScreen = "/circuts_screen";
+  static const String smdResistorScreen = "/smdResistor_screen";
 
   // widget Navigator names
   static const String resistorWidget = "/resistor_widget";
@@ -39,9 +40,13 @@ class AppRoutes {
         builder: (context, state) =>
             BlocProvider(create: (context) => CapacitorBloc(), child: CapacitorScreen()),
       ),
-      GoRoute(path: smdScreen, builder: (context, state) => SmdScreen()),
       GoRoute(path: transformerScreen, builder: (context, state) => TransformerScreen()),
       GoRoute(path: upsScreen, builder: (context, state) => UpsScreen()),
+      GoRoute(
+        path: smdResistorScreen,
+        builder: (context, state) =>
+            BlocProvider(create: (context) => SmdResistorBloc(), child: SmdResistorScreen()),
+      ),
       GoRoute(path: circutsScreen, builder: (context, state) => CircleAvatar()),
       // widget Navigator
       GoRoute(
