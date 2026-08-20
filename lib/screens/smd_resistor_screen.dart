@@ -1,6 +1,7 @@
 import 'package:circuitpedia/blocs/smd_resistor/smd_resistor_bloc.dart';
 import 'package:circuitpedia/core/constants/app_icons.dart';
 import 'package:circuitpedia/logic/resistor_data.dart';
+import 'package:circuitpedia/logic/resistor_logcs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +11,8 @@ class SmdResistorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String value = "0";
+    String symbol = "Ω";
     final TextStyle textStyle = TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
     return Scaffold(
       appBar: AppBar(title: Text("SMD Resistor"), centerTitle: true),
@@ -67,7 +70,15 @@ class SmdResistorScreen extends StatelessWidget {
                                 child: TextFormField(
                                   style: textStyle,
                                   keyboardType: TextInputType.number,
-                                  maxLength: 12,
+                                  maxLength: (value.contains("."))
+                                      ? 5
+                                      : ((symbol == "Ω")
+                                            ? 12
+                                            : (symbol == "kΩ")
+                                            ? 9
+                                            : (symbol == "MΩ")
+                                            ? 6
+                                            : 3),
                                   decoration: InputDecoration(
                                     hintText: "1000",
                                     labelText: "Enter Value.",
@@ -77,40 +88,29 @@ class SmdResistorScreen extends StatelessWidget {
                                   ),
 
                                   onChanged: (newValue) {
-                                    if (newValue.isEmpty) {
-                                      context.read<SmdResistorBloc>().add(
-                                        ValueToCode(value: "0 ${state.value.split(" ")[1]}"),
-                                      );
-                                    } else {
-                                      context.read<SmdResistorBloc>().add(
-                                        ValueToCode(
-                                          value: "$newValue ${state.value.split(" ")[1]}",
-                                        ),
-                                      );
-                                    }
+                                    value = newValue;
+                                    context.read<SmdResistorBloc>().add(
+                                      ValueToCode(value: "$newValue $symbol"),
+                                    );
                                   },
                                 ),
                               ),
                               SizedBox(
                                 child: DropdownMenu(
                                   textStyle: textStyle,
-                                  dropdownMenuEntries: ResistorData.unitFactors.keys.map((e) {
+                                  dropdownMenuEntries: ResistorLogcs.smdUnits().map((e) {
                                     return DropdownMenuEntry(value: e, label: e);
                                   }).toList(),
-                                  initialSelection: ResistorData.unitFactors.keys.toList()[0],
+                                  initialSelection: symbol,
 
                                   onSelected: (newSymbol) {
-                                    if (newSymbol == null) {
-                                      context.read<SmdResistorBloc>().add(
-                                        ValueToCode(value: "${state.value.split(" ")[0]} Ω"),
-                                      );
-                                    } else {
-                                      context.read<SmdResistorBloc>().add(
-                                        ValueToCode(
-                                          value: "${state.value.split(" ")[0]} $newSymbol",
-                                        ),
-                                      );
+                                    if (newSymbol != null) {
+                                      symbol = newSymbol;
                                     }
+
+                                    context.read<SmdResistorBloc>().add(
+                                      ValueToCode(value: "$value $symbol"),
+                                    );
                                   },
                                 ),
                               ),

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'resistor_data.dart';
 
@@ -241,68 +242,89 @@ class ResistorLogcs {
   static String _removeZeros(double value) {
     return value.toStringAsFixed(10).replaceFirst(RegExp(r'\.?0+$'), '');
   }
+
+  static List<String> smdUnits() {
+    List<String> r = ResistorData.unitFactors.keys.toList();
+    r.removeRange(0, 4);
+    r.removeLast();
+
+    return r;
+  }
 }
 
 class SMDResistorLogic {
   String codeToValue(String code) {
-    code = code.trim();
-    if (code == "0" || code == "00" || code == "000") {
-      return "0 Ω";
-    }
-    if (code.length <= 2) {
-      return "$code Ω";
-    } else if (code.length == 3) {
-      double firstTwo = double.parse(code.substring(0, 2));
-      double multiplier = double.parse(code.substring(2));
-
-      double value = firstTwo * pow(10, multiplier);
-
-      return ResistorLogcs.formatValue(value);
+    String result = "";
+    if (code.contains(".")) {
+      result = code;
     } else {
-      int firstThree = int.parse(code.substring(0, 3));
-      int multiplier = int.parse(code.substring(3));
+      if (code.length < 3) {
+        result = code;
+      } else if (code.length == 3) {
+        result = (double.parse(code.substring(0, 2)) * pow(10, int.parse(code.substring(2))))
+            .toString();
+      } else if (code.length == 4) {
+        result = (double.parse(code.substring(0, 3)) * pow(10, int.parse(code.substring(3))))
+            .toString();
+      }
+    }
+    return "$result Ω";
+  }
 
-      int value = firstThree * pow(10, multiplier) as int;
-
-      return ResistorLogcs.formatValue(value.toDouble());
+  String coverPointValues(String value) {
+    {
+      if (double.parse(value) >= 1) {
+        return int.parse(value).toString();
+      } else {
+        double v = double.parse(value);
+        if (v == 0) {
+          return "0";
+        } else if (v >= 0.001 && v <= 0.999) {
+          return v.toString();
+        } else {
+          return "The compunent not Exist.";
+        }
+      }
     }
   }
 
-  String valueToCode(String value) {
-    final parts = value.trim().split(RegExp(r'\s+'));
-
-    if (parts.length <= 2) {
-      return value.split(" ")[0];
+  String convertToOhm(String value, String unit) {
+    if ('kΩ' == unit) {
+      return (double.parse(value) * 1e3).toInt().toString();
+    } else if ('MΩ' == unit) {
+      return (double.parse(value) * 1e6).toInt().toString();
+    } else if ('GΩ' == unit) {
+      return (double.parse(value) * 1e9).toInt().toString();
+    } else if ('Ω' == unit) {
+      return value;
     }
-
-    double number = double.parse(parts[0]);
-    String unit = parts[1];
-    double ohms = number * ResistorData.unitFactors[unit]!;
-    if (ohms == 0) {
-      return "0";
-    }
-
-    return generateCode(ohms);
+    return '0';
   }
 
-  String generateCode(double ohms) {
-    print(ohms);
-    for (int multiplier = 0; multiplier <= 9; multiplier++) {
-      double significant = ohms / pow(10, multiplier);
+  String valueToCode(String value, String symbol) {
+    String result = "";
+    String ohme = convertToOhm(value, symbol);
+    if (ohme.contains(".")) {
+      if (ohme.length > 5) {
+        return ohme.substring(0, 5);
+      }
+      return ohme;
+    } else {
+      int n = ohme.toString().length;
+      if (n > 2 && n < 12) {
+        result += "${ohme.toString().substring(0, 2)}${ohme.toString().substring(2).length}";
+      }
+      if (n > 3 && n < 13) {
+        String s = (result.isEmpty) ? "" : " OR ";
+        result += " $s${ohme.toString().substring(0, 3)}${ohme.toString().substring(3).length}";
+      }
 
-      if (significant >= 10 && significant <= 99 && significant == significant.roundToDouble()) {
-        return "${significant.toInt()}$multiplier";
+      if (n > 12) {
+        return "The value is not exist.";
+      } else if (n < 3) {
+        result = ohme.toString();
       }
     }
-
-    for (int multiplier = 0; multiplier <= 9; multiplier++) {
-      double significant = ohms / pow(10, multiplier);
-
-      if (significant >= 100 && significant <= 999 && significant == significant.roundToDouble()) {
-        return "${significant.toInt()}$multiplier";
-      }
-    }
-
-    throw FormatException("Cannot represent $ohms Ω as a standard SMD code");
+    return result;
   }
 }

@@ -15,17 +15,18 @@ class SmdResistorBloc extends Bloc<SmdResistorEvent, SmdResistorState> {
 
   FutureOr<void> _codeToValue(CodeToValue event, Emitter<SmdResistorState> emit) {
     String code = event.code;
-    String value = SMDResistorLogic().codeToValue(code);
-    print(code);
-    print(value);
+    String value = ResistorLogcs.formatValue(
+      double.parse((SMDResistorLogic().codeToValue(code).split(" ")[0])),
+    );
     emit(SmdResistorState(code: code, value: value));
   }
 
   FutureOr<void> _valueTOCode(ValueToCode event, Emitter<SmdResistorState> emit) {
-    String value = event.value;
-    String code = SMDResistorLogic().valueToCode(value);
-    print(value);
-    print(code);
-    emit(SmdResistorState(value: value, code: code));
+    List<String> l = event.value.split(" ");
+    String code = SMDResistorLogic().valueToCode(l[0], l[1]);
+    String value = ResistorLogcs.formatValue(
+      double.parse((SMDResistorLogic().convertToOhm(l[0], l[1]).split(" ")[0])),
+    );
+    emit(SmdResistorState(code: code, value: value));
   }
 }

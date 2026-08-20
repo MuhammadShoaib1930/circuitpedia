@@ -1,4 +1,3 @@
-import 'package:circuitpedia/core/constants/app_icons.dart';
 import 'package:circuitpedia/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
