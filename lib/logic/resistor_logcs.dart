@@ -251,7 +251,6 @@ class ResistorLogcs {
     return r;
   }
 }
-
 class SMDResistorLogic {
   String codeToValue(String code) {
     String result = "";

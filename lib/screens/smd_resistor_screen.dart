@@ -1,6 +1,5 @@
 import 'package:circuitpedia/blocs/smd_resistor/smd_resistor_bloc.dart';
 import 'package:circuitpedia/core/constants/app_icons.dart';
-import 'package:circuitpedia/logic/resistor_data.dart';
 import 'package:circuitpedia/logic/resistor_logcs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

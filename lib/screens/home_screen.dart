@@ -30,6 +30,11 @@ class HomeScreen extends StatelessWidget {
                 name: "Capacitors",
                 namePage: AppRoutes.capacitorScreen,
               ),
+              AppButton(
+                imgPath: AppIcons.transformersIcons,
+                name: "Transformer",
+                namePage: AppRoutes.transformerScreen,
+              ),
             ],
           ),
         ),
