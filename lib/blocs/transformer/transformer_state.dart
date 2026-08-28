@@ -7,7 +7,15 @@ class TransformerState extends Equatable {
   final List<double> st;
   final List<double> pv;
   final List<double> pt;
+  final List<double> voltages;
   final double area;
+  final bool isArea;
+
+  final List<double> watts;
+  final List<double> currents;
+  final List<double> kgs;
+  final List<String> wireGages;
+
   final List<TransformerModel> model;
   const TransformerState({
     this.width = 0,
@@ -17,11 +25,33 @@ class TransformerState extends Equatable {
     this.pv = const [0, 0, 0],
     this.pt = const [0, 0, 0],
     this.area = 0,
-    this.model=const [TransformerModel(isVoltage: false,truns:0,voltage: 0)],
+    this.model = const [TransformerModel(isVoltage: false, truns: 0, voltage: 0)],
+    this.isArea = true,
+    this.voltages = const [0],
+    this.watts = const [0],
+    this.currents = const [0],
+    this.kgs = const [0],
+    this.wireGages = const ["0"],
+
   });
 
   @override
-  List<Object> get props => [width, height, sv, st, pv, pt, area, model];
+  List<Object> get props => [
+    width,
+    height,
+    sv,
+    st,
+    pv,
+    pt,
+    area,
+    model,
+    isArea,
+    voltages,
+    watts,
+    currents,
+    kgs,
+    wireGages,
+  ];
 
   TransformerState copyWith({
     double? width,
@@ -31,6 +61,13 @@ class TransformerState extends Equatable {
     List<double>? pv,
     List<double>? pt,
     double? area,
+    bool? isArea,
+    List<double>? voltages,
+
+    List<double>? watts,
+    List<double>? currents,
+    List<double>? kgs,
+    List<String>? wireGages,
 
     List<TransformerModel>? model,
   }) {
@@ -42,7 +79,13 @@ class TransformerState extends Equatable {
       pv: pv ?? this.pv,
       pt: pt ?? this.pt,
       area: area ?? this.area,
-      model: model??this.model
+      model: model ?? this.model,
+      isArea: isArea ?? this.isArea,
+      voltages: voltages ?? this.voltages,
+      watts: watts ?? this.watts,
+      currents: currents ?? this.currents,
+      kgs: kgs ?? this.kgs,
+      wireGages: wireGages ?? this.wireGages,
     );
   }
 }

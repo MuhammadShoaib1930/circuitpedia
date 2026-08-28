@@ -1,5 +1,6 @@
 import 'package:circuitpedia/blocs/transformer/transformer_bloc.dart';
 import 'package:circuitpedia/core/constants/app_icons.dart';
+import 'package:circuitpedia/logic/copper_wire_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,26 +17,55 @@ class TransformerWidget {
           spacing: 10.h,
           children: [
             SizedBox(width: double.infinity.w),
-            Text("UPS Calculate", style: textStyle.copyWith(fontWeight: FontWeight.bold)),
-            upsPageWidget(
-              callBack1: (newValue) {
-                if (newValue.isNotEmpty) {
-                  context.read<TransformerBloc>().add(SetHeight(height: double.parse(newValue)));
-                }
+            Row(
+              spacing: 10,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("UPS", style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+                BlocSelector<TransformerBloc, TransformerState, bool>(
+                  selector: (state) {
+                    return state.isArea;
+                  },
+                  builder: (context, isArea) {
+                    return Switch(
+                      value: isArea,
+                      onChanged: (value) {
+                        context.read<TransformerBloc>().add(SetIsArea(value));
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            BlocSelector<TransformerBloc, TransformerState, bool>(
+              selector: (state) {
+                return state.isArea;
               },
-              lable1: "WIDTH",
-              callBack2: (newValue) {
-                if (newValue.isNotEmpty) {
-                  context.read<TransformerBloc>().add(SetWidth(width: double.parse(newValue)));
-                }
+              builder: (context, isArea) {
+                return upsPageWidget(
+                  isArea: isArea,
+                  callBack1: (newValue) {
+                    if (newValue.isNotEmpty) {
+                      context.read<TransformerBloc>().add(
+                        SetHeight(height: double.parse(newValue)),
+                      );
+                    }
+                  },
+                  lable1: "WIDTH",
+                  callBack2: (newValue) {
+                    if (newValue.isNotEmpty) {
+                      context.read<TransformerBloc>().add(SetWidth(width: double.parse(newValue)));
+                    }
+                  },
+                  lable2: "HEIGHT",
+                  callBack3: (newValue) {
+                    if (newValue.isNotEmpty) {
+                      context.read<TransformerBloc>().add(SetArea(area: double.parse(newValue)));
+                    }
+                  },
+                  lable3: "Area",
+                );
               },
-              lable2: "HEIGHT",
-              callBack3: (newValue) {
-                if (newValue.isNotEmpty) {
-                  context.read<TransformerBloc>().add(SetArea(area: double.parse(newValue)));
-                }
-              },
-              lable3: "Area",
             ),
             SizedBox(
               child: BlocBuilder<TransformerBloc, TransformerState>(
@@ -66,6 +96,7 @@ class TransformerWidget {
 
   SizedBox upsPageWidget({
     String lable1 = "",
+    bool isArea = true,
     String lable2 = "",
     String lable3 = "",
     required Function(String newValue) callBack1,
@@ -76,36 +107,39 @@ class TransformerWidget {
       child: Column(
         spacing: 10.h,
         children: [
-          TextFormField(
-            keyboardType: TextInputType.number,
-            style: textStyle,
-            onChanged: callBack1,
-            decoration: InputDecoration(
-              labelText: lable1,
+          if (!isArea)
+            TextFormField(
+              keyboardType: TextInputType.number,
+              style: textStyle,
+              onChanged: callBack1,
+              decoration: InputDecoration(
+                labelText: lable1,
 
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+              ),
             ),
-          ),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            style: textStyle,
-            onChanged: callBack2,
-            decoration: InputDecoration(
-              labelText: lable2,
+          if (!isArea)
+            TextFormField(
+              keyboardType: TextInputType.number,
+              style: textStyle,
+              onChanged: callBack2,
+              decoration: InputDecoration(
+                labelText: lable2,
 
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+              ),
             ),
-          ),
-          TextFormField(
-            keyboardType: TextInputType.number,
-            style: textStyle,
-            onChanged: callBack3,
-            decoration: InputDecoration(
-              labelText: lable3,
+          if (isArea)
+            TextFormField(
+              keyboardType: TextInputType.number,
+              style: textStyle,
+              onChanged: callBack3,
+              decoration: InputDecoration(
+                labelText: lable3,
 
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+              ),
             ),
-          ),
           Stack(
             alignment: AlignmentGeometry.topCenter,
             children: [
@@ -186,57 +220,71 @@ class TransformerWidget {
               spacing: 10.h,
               children: [
                 SizedBox(width: double.infinity.w),
-                Text(
-                  "Transformer Manualy Calculate",
-                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                Row(
+                  spacing: 10,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Manualy", style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+                    Switch(
+                      value: state.isArea,
+                      onChanged: (value) {
+                        context.read<TransformerBloc>().add(SetIsArea(value));
+                      },
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  initialValue: state.height.toString(),
-                  style: textStyle,
-                  onChanged: (newvalue) {
-                    if (newvalue.isNotEmpty) {
-                      context.read<TransformerBloc>().add(
-                        SetHeight(height: double.parse(newvalue)),
-                      );
-                    }
-                  },
-                  decoration: InputDecoration(
-                    labelText: "HEIGHT",
+                if (!state.isArea)
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    initialValue: state.height.toString(),
+                    style: textStyle,
+                    onChanged: (newvalue) {
+                      if (newvalue.isNotEmpty) {
+                        context.read<TransformerBloc>().add(
+                          SetHeight(height: double.parse(newvalue)),
+                        );
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Width",
 
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                    ),
                   ),
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  style: textStyle,
-                  initialValue: state.width.toString(),
-                  onChanged: (newvalue) {
-                    if (newvalue.isNotEmpty) {
-                      context.read<TransformerBloc>().add(SetWidth(width: double.parse(newvalue)));
-                    }
-                  },
-                  decoration: InputDecoration(
-                    labelText: "WIDTH",
+                if (!state.isArea)
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    initialValue: state.width.toString(),
+                    onChanged: (newvalue) {
+                      if (newvalue.isNotEmpty) {
+                        context.read<TransformerBloc>().add(
+                          SetWidth(width: double.parse(newvalue)),
+                        );
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Height",
 
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                    ),
                   ),
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  style: textStyle,
-                  initialValue: state.area.toString(),
-                  onChanged: (newvalue) {
-                    if (newvalue.isNotEmpty) {
-                      context.read<TransformerBloc>().add(SetArea(area: double.parse(newvalue)));
-                    }
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Area",
+                if (state.isArea)
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    initialValue: state.area.toString(),
+                    onChanged: (newvalue) {
+                      if (newvalue.isNotEmpty) {
+                        context.read<TransformerBloc>().add(SetArea(area: double.parse(newvalue)));
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Area",
 
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                    ),
                   ),
-                ),
                 Text("Area = ${state.area.toString()}", style: textStyle),
                 SizedBox(
                   width: double.infinity.w,
@@ -316,58 +364,128 @@ class TransformerWidget {
               spacing: 10.h,
               children: [
                 SizedBox(width: double.infinity.w),
-                Text(
-                  "Transformer information",
-                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                Row(
+                  spacing: 10,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Transformer information",
+                      style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Switch(
+                      value: state.isArea,
+                      onChanged: (value) {
+                        context.read<TransformerBloc>().add(SetIsArea(value));
+                      },
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  style: textStyle,
-                  initialValue: state.area.toString(),
-                  onChanged: (newvalue) {
-                    if (newvalue.isNotEmpty) {
-                      context.read<TransformerBloc>().add(SetArea(area: double.parse(newvalue)));
-                    }
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Area",
+                if (!state.isArea)
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    initialValue: state.area.toString(),
+                    onChanged: (newvalue) {
+                      if (newvalue.isNotEmpty) {
+                        context.read<TransformerBloc>().add(
+                          TransformerInformation(
+                            area: 0,
+                            index: -1,
+                            voltage: 0,
+                            wireGage: "",
+                            width: double.parse(newvalue),
+                            height: 0,
+                          ),
+                        );
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Width",
 
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                    ),
                   ),
-                ),
+                if (!state.isArea)
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    initialValue: state.area.toString(),
+                    onChanged: (newvalue) {
+                      if (newvalue.isNotEmpty) {
+                        context.read<TransformerBloc>().add(
+                          TransformerInformation(
+                            area: 0,
+                            index: -1,
+                            voltage: 0,
+                            wireGage: "",
+                            width: 0,
+                            height: double.parse(newvalue),
+                          ),
+                        );
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Height",
+
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                    ),
+                  ),
+                if (state.isArea)
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    initialValue: state.area.toString(),
+                    onChanged: (newvalue) {
+                      if (newvalue.isNotEmpty) {
+                        context.read<TransformerBloc>().add(
+                          TransformerInformation(
+                            area: double.parse(newvalue),
+                            voltage: 0,
+                            wireGage: "",
+                            index: -1,
+                            width: 0,
+                            height: 0,
+                          ),
+                        );
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Area",
+
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+                    ),
+                  ),
                 SizedBox(
                   width: double.infinity.w,
                   height: 400.h,
                   child: ListView.builder(
-                    scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
                       return SizedBox(
                         child: Row(
                           children: [
                             SizedBox(
-                              width: (state.model[index].isVoltage) ? 100.w : 130.w,
+                              width: 150.w,
                               child: TextFormField(
                                 keyboardType: TextInputType.number,
                                 style: textStyle,
-                                initialValue: (state.model[index].isVoltage)
-                                    ? state.model[index].truns.toString()
-                                    : state.model[index].voltage.toString(),
-                                maxLength: (state.model[index].isVoltage) ? 4 : 8,
+                                maxLength: 8,
+                                initialValue: state.area.toString(),
                                 onChanged: (newvalue) {
                                   if (newvalue.isNotEmpty) {
-                                    if (state.model[index].isVoltage) {
-                                      context.read<TransformerBloc>().add(
-                                        SetTurns(turns: double.parse(newvalue), index: index),
-                                      );
-                                    } else {
-                                      context.read<TransformerBloc>().add(
-                                        SetVoltage(voltage: double.parse(newvalue), index: index),
-                                      );
-                                    }
+                                    context.read<TransformerBloc>().add(
+                                      TransformerInformation(
+                                        area: 0,
+                                        width: 0,
+                                        height: 0,
+                                        wireGage: "",
+                                        voltage: double.parse(newvalue),
+                                        index: index,
+                                      ),
+                                    );
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: (state.model[index].isVoltage) ? "Turns" : "Voltage",
+                                  labelText: "Voltage",
 
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(50.r),
@@ -375,25 +493,37 @@ class TransformerWidget {
                                 ),
                               ),
                             ),
-                            Switch(
-                              value: state.model[index].isVoltage,
+                            DropdownButton(
+                              value: state.wireGages[index],
+                              items: CopperWireData().wireGauge
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
                               onChanged: (value) {
-                                context.read<TransformerBloc>().add(
-                                  SetIsVoltage(isVoltage: value, index: index),
-                                );
+                                if (value != null && value.isNotEmpty) {
+                                  context.read<TransformerBloc>().add(
+                                    TransformerInformation(
+                                      area: 0,
+                                      voltage: 0,
+                                      width: 0,
+                                      height: 0,
+                                      index: index,
+                                      wireGage: value,
+                                    ),
+                                  );
+                                }
                               },
-                            ),
-                            Text(
-                              (state.model[index].isVoltage)
-                                  ? "Voltage = ${state.model[index].voltage}v"
-                                  : "Truns = ${state.model[index].truns}t",
-                              style: textStyle,
                             ),
                           ],
                         ),
                       );
                     },
-                    itemCount: state.model.length,
+                    itemCount: state.voltages.length,
                   ),
                 ),
               ],

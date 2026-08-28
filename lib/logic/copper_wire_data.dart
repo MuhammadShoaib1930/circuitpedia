@@ -365,6 +365,14 @@ class CopperWireData {
     }
     return maxAmpere[i];
   }
+  double getWireToLenthMeterPerKg(String gauge) {
+    int i = 0;
+    while (wireGauge[i] != gauge) {
+      i++;
+    }
+    return lengthMeterPerKg[i];
+  }
+
 
   String getCurrentToWire(double current) {
     int i = 0;
@@ -373,5 +381,5 @@ class CopperWireData {
     }
     return wireGauge[i];
   }
-  
+
 }

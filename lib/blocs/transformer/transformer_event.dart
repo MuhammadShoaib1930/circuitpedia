@@ -47,7 +47,33 @@ final class SetTurns extends TransformerEvent {
 final class SetIsVoltage extends TransformerEvent {
   final int index;
   final bool isVoltage;
-  const SetIsVoltage({required this.isVoltage,required this.index});
+  const SetIsVoltage({required this.isVoltage, required this.index});
   @override
-  List<Object> get props => [isVoltage,index];
+  List<Object> get props => [isVoltage, index];
+}
+
+final class SetIsArea extends TransformerEvent {
+  final bool isTrue;
+  const SetIsArea(this.isTrue);
+  @override
+  List<Object> get props => [isTrue];
+}
+
+final class TransformerInformation extends TransformerEvent {
+  final double area;
+  final double voltage;
+  final String wireGage;
+  final double width;
+  final double height;
+  final int index;
+  const TransformerInformation({
+    required this.area,
+    required this.voltage,
+    required this.wireGage,
+    required this.width,
+    required this.index,
+    required this.height,
+  });
+  @override
+  List<Object> get props => [area, voltage, wireGage, width, height, index];
 }

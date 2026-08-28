@@ -1,5 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:circuitpedia/logic/copper_wire_data.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 class TransformerModel extends Equatable {
   final double voltage;
@@ -31,18 +32,30 @@ class TransformerLogic {
   double findVoltageFromTruns(double area, double trun) {
     return (trun / findTrunsPerVoltage(area)).ceilToDouble();
   }
+
   double findVoltage(double area, double voltage) {
     return findTrunsPerVoltage(area) * voltage;
   }
 
-  // double findWatt(String wireGage, double voltage) {
-  //   return CopperWireData().getWireToCurrent(wireGage) * voltage;
-  // }
-
-  // double findWireGage(double wireGage, double voltage) {
-  //   return 0;
-  // }
-
+  Map<String, List<double>> transformerInformation({
+    required double area,
+    required List<double> voltages,
+    required List<String> wireGages,
+  }) {
+    int n = voltages.length;
+    List<double> watts = List.filled(n, 0);
+    List<double> currents = List.filled(n, 0);
+    List<double> grams = List.filled(n, 0);
+    for (int i = 0; i < voltages.length; i++) {
+      currents[i] = (CopperWireData().getWireToCurrent(wireGages[i])).ceilToDouble();
+      watts[i] = (currents[i] * voltages[i]).ceilToDouble();
+      grams[i] =
+          ((area * (findTrunsPerVoltage(area) * voltages[i]) * 66) /
+                  CopperWireData().getWireToLenthMeterPerKg(wireGages[i]))
+              .ceilToDouble();
+    }
+    return {"watts": watts, "currents": currents, "grams": grams};
+  }
   Map<String, List<double>> upsCalculate(double area) {
     List<double> pv = [12.0, 0.0, 12.0];
     List<double> sv = [0.0, 140.0, 260.0];
