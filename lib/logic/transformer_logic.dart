@@ -36,25 +36,31 @@ class TransformerLogic {
     return findTrunsPerVoltage(area) * voltage;
   }
 
-  Map<String, List<double>> transformerInformation({
+  Map<String, List<dynamic>> transformerInformation({
     required double area,
     required List<double> voltages,
     required List<String> wireGages,
+    required List<bool> isCopper,
   }) {
     int n = voltages.length;
     List<double> watts = List.filled(n, 0);
     List<double> currents = List.filled(n, 0);
     List<double> grams = List.filled(n, 0);
     for (int i = 0; i < voltages.length; i++) {
-      currents[i] = (CopperWireData().getWireToCurrent(wireGages[i]));
+      currents[i] = (CopperWireData().getWireToCurrent(gauge: wireGages[i], isCopper: isCopper[i]));
       watts[i] = (currents[i] * voltages[i]);
-      grams[i] =
-          double.parse(((area * (findTrunsPerVoltage(area) * voltages[i]) * 66) /
-                  CopperWireData().getWireToLenthMeterPerKg(wireGages[i])).toStringAsFixed(2))
-              ;
+      grams[i] = double.parse(
+        ((area * (findTrunsPerVoltage(area) * voltages[i]) * 66) /
+                CopperWireData().getWireToLenthMeterPerKg(
+                  gauge: wireGages[i],
+                  isCopper: isCopper[i],
+                ))
+            .toStringAsFixed(2),
+      );
     }
-    return {"watts": watts, "currents": currents, "grams": grams};
+    return {"watts": watts, "currents": currents, "grams": grams, "isCopper": isCopper};
   }
+
   Map<String, List<double>> upsCalculate(double area) {
     List<double> pv = [12.0, 0.0, 12.0];
     List<double> sv = [0.0, 140.0, 260.0];

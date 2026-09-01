@@ -380,6 +380,7 @@ class TransformerWidget {
                     ),
                   ],
                 ),
+
                 if (!state.isArea)
                   TextFormField(
                     keyboardType: TextInputType.number,
@@ -505,6 +506,25 @@ class TransformerWidget {
                                 "grms = ${state.grams[index]} ${(state.grams[index] > 999) ? "OR ${(state.grams[index] / 1000).toStringAsFixed(3)} Kg" : ""} ",
                                 style: textStyle,
                               ),
+                            SizedBox(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    "${(state.isCopper[index] ? "Copper" : "Silver")} Wire",
+                                    style: textStyle,
+                                  ),
+                                  Switch(
+                                    value: state.isCopper[index],
+                                    onChanged: (value) {
+                                      context.read<TransformerBloc>().add(
+                                        TransformerInformation(index: index, isCopper: value),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       );

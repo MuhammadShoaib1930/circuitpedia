@@ -239,7 +239,7 @@ class CopperWireData {
     0.0005,
   ];
 
-  final List<double> maxAmpere = [
+  final List<double> maxAmpereCopper = [
     570,
     491,
     426,
@@ -299,7 +299,7 @@ class CopperWireData {
     0.0023,
   ];
 
-  final List<double> lengthMeterPerKg = [
+  final List<double> lengthMeterPerKgCopper = [
     1.00,
     1.17,
     1.34,
@@ -358,28 +358,149 @@ class CopperWireData {
     174065.67,
     250983.62,
   ];
-  double getWireToCurrent(String gauge) {
+
+  final List<double> maxAmpereSilver = [
+    601.86,
+    519.48,
+    450.71,
+    386.17,
+    333.35,
+    291.77,
+    252.86,
+    216.89,
+    184.09,
+    153.61,
+    130.13,
+    108.97,
+    88.94,
+    74.75,
+    61.80,
+    50.05,
+    39.52,
+    32.50,
+    26.11,
+    20.43,
+    15.45,
+    12.51,
+    9.89,
+    7.56,
+    5.55,
+    3.86,
+    3.13,
+    2.48,
+    1.89,
+    1.39,
+    1.16,
+    0.965,
+    0.782,
+    0.650,
+    0.529,
+    0.446,
+    0.371,
+    0.325,
+    0.281,
+    0.241,
+    0.204,
+    0.170,
+    0.140,
+    0.111,
+    0.087,
+    0.066,
+    0.056,
+    0.047,
+    0.038,
+    0.032,
+    0.024,
+    0.019,
+    0.014,
+    0.0096,
+    0.0061,
+    0.0035,
+    0.0024,
+  ];
+
+  final List<double> lengthMeterPerKgSilver = [
+    0.854,
+    0.999,
+    1.143,
+    1.339,
+    1.545,
+    1.766,
+    2.039,
+    2.381,
+    2.817,
+    3.370,
+    3.981,
+    4.766,
+    5.820,
+    6.922,
+    8.378,
+    10.342,
+    13.099,
+    15.954,
+    19.839,
+    25.350,
+    33.533,
+    41.378,
+    52.353,
+    68.464,
+    93.126,
+    134.112,
+    165.589,
+    209.607,
+    273.712,
+    372.581,
+    443.352,
+    536.482,
+    662.347,
+    797.725,
+    979.650,
+    1160.430,
+    1395.180,
+    1595.000,
+    1840.000,
+    2146.000,
+    2534.000,
+    3039.000,
+    3715.000,
+    4640.000,
+    5958.000,
+    7930.000,
+    9311.000,
+    11070.000,
+    13388.000,
+    16560.000,
+    20938.000,
+    27377.000,
+    37202.000,
+    53643.000,
+    83990.000,
+    148870.000,
+    214400.000,
+  ];
+
+  double getWireToCurrent({required String gauge, required bool isCopper}) {
     int i = 0;
     while (wireGauge[i] != gauge) {
       i++;
     }
-    return maxAmpere[i];
+    return (isCopper) ? maxAmpereCopper[i] : maxAmpereSilver[i];
   }
-  double getWireToLenthMeterPerKg(String gauge) {
+
+  double getWireToLenthMeterPerKg({required String gauge, required bool isCopper}) {
     int i = 0;
     while (wireGauge[i] != gauge) {
       i++;
     }
-    return lengthMeterPerKg[i];
+    return (isCopper) ? lengthMeterPerKgCopper[i] : lengthMeterPerKgSilver[i];
   }
 
-
-  String getCurrentToWire(double current) {
+  String getCurrentToWire({required double current, required bool isCopper}) {
     int i = 0;
-    while (maxAmpere[i] != current) {
+
+    while (((isCopper) ? maxAmpereCopper[i] : maxAmpereSilver[i]) != current) {
       i++;
     }
     return wireGauge[i];
   }
-
 }

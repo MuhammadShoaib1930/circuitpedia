@@ -10,7 +10,7 @@ class TransformerState extends Equatable {
   final List<double> voltages;
   final double area;
   final bool isArea;
-
+  final List<bool> isCopper;
   final List<double> watts;
   final List<double> currents;
   final List<double> grams;
@@ -32,7 +32,7 @@ class TransformerState extends Equatable {
     this.currents = const [0],
     this.grams = const [0],
     this.wireGages = const ["50"],
-
+    this.isCopper = const [false],
   });
 
   @override
@@ -51,6 +51,7 @@ class TransformerState extends Equatable {
     currents,
     grams,
     wireGages,
+    isCopper,
   ];
 
   TransformerState copyWith({
@@ -68,8 +69,8 @@ class TransformerState extends Equatable {
     List<double>? currents,
     List<double>? grams,
     List<String>? wireGages,
-
     List<TransformerModel>? model,
+    List<bool>? isCopper,
   }) {
     return TransformerState(
       width: width ?? this.width,
@@ -86,6 +87,7 @@ class TransformerState extends Equatable {
       currents: currents ?? this.currents,
       grams: grams ?? this.grams,
       wireGages: wireGages ?? this.wireGages,
+      isCopper: isCopper ?? this.isCopper,
     );
   }
 }

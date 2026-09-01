@@ -66,6 +66,7 @@ final class TransformerInformation extends TransformerEvent {
   final double width;
   final double height;
   final int index;
+  final bool isCopper;
   const TransformerInformation({
     this.area = -1,
     this.voltage = -1,
@@ -73,7 +74,8 @@ final class TransformerInformation extends TransformerEvent {
     this.width = -1,
     this.index = -1,
     this.height = -1,
+    this.isCopper = true,
   });
   @override
-  List<Object> get props => [area, voltage, wireGage, width, height, index];
+  List<Object> get props => [area, voltage, wireGage, width, height, index, isCopper];
 }

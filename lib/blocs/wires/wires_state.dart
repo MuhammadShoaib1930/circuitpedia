@@ -24,7 +24,7 @@ class WiresState extends Equatable {
     this.selectedRow = 0,
     this.selectedColumn = 0,
     this.lengthMeterPerKg = const [],
-    this.heading = "",
+    this.heading = "WireGage",
     this.value = "",
   });
 

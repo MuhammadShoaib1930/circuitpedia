@@ -96,6 +96,7 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
     Emitter<TransformerState> emit,
   ) {
     int index = event.index;
+
     if (index == -1) {
       double area = event.area;
       double width = event.width;
@@ -122,7 +123,11 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
     } else {
       if (index == state.voltages.length - 1) {
         emit(
-          state.copyWith(voltages: [...state.voltages, 0], wireGages: [...state.wireGages, "50"]),
+          state.copyWith(
+            voltages: [...state.voltages, 0],
+            wireGages: [...state.wireGages, "50"],
+            isCopper: [...state.isCopper, true],
+          ),
         );
       }
       double voltage = event.voltage;
@@ -131,14 +136,18 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
         List<double> voltages = [...state.voltages];
         voltages[index] = voltage;
         emit(state.copyWith(voltages: voltages));
-      } else {
+      } else if (event.wireGage.isNotEmpty) {
         List<String> wireGages = [...state.wireGages];
         wireGages[index] = wireGage;
         emit(state.copyWith(wireGages: wireGages));
+      } else {
+        List<bool> isCoppers = [...state.isCopper];
+        isCoppers[index] = event.isCopper;
+        emit(state.copyWith(isCopper: isCoppers));
       }
     }
     if (state.area != 0) {
-      Map<String, List<double>> map = TransformerLogic().transformerInformation(
+      Map<String, List<dynamic>> map = TransformerLogic().transformerInformation(
         area: state.area,
         voltages: (event.index == state.voltages.length - 1)
             ? [...state.voltages, 0]
@@ -146,14 +155,18 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
         wireGages: (event.index == state.voltages.length - 1)
             ? [...state.wireGages, ""]
             : state.wireGages,
+        isCopper: (event.index == state.isCopper.length - 1)
+            ? [...state.isCopper, true]
+            : state.isCopper,
       );
       emit(
         state.copyWith(
           voltages: state.voltages,
           wireGages: state.wireGages,
-          watts: map["watts"]!,
-          currents: map['currents']!,
-          grams: map['grams']!,
+          watts: map["watts"]! as List<double>,
+          currents: map['currents']! as List<double>,
+          grams: map['grams']! as List<double>,
+          isCopper: map['isCopper']! as List<bool>,
         ),
       );
     }

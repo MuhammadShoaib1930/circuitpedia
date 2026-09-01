@@ -1,4 +1,5 @@
 import 'package:circuitpedia/blocs/wires/wires_bloc.dart';
+import 'package:circuitpedia/logic/wire_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,15 +22,6 @@ class _WiresScreenState extends State<WiresScreen> {
 
   static const double firstColumnWidth = 100;
   static const double columnWidth = 100;
-
-  final List<String> headings = [
-    "WireGage",
-    "Diameter mm",
-    "Diameter Inch",
-    "Area mm2",
-    "Max Ampere",
-    "lengthMeterPerKg",
-  ];
 
   @override
   void initState() {
@@ -104,27 +96,34 @@ class _WiresScreenState extends State<WiresScreen> {
           ),
 
           body: Column(
-            spacing: 20,
             children: [
-              SizedBox(
+              SizedBox(height: 10.h),
+              Card(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 180.w,
+                      width: 100.w,
                       child: SearchBar(
                         hintText: 'Search...',
+
                         onChanged: (value) {
                           context.read<WiresBloc>().add(Search(value: value));
                         },
                       ),
                     ),
+                    SizedBox(width: 10),
 
                     DropdownButton<String>(
-                      value: state.heading.isEmpty ? headings[0] : state.heading,
+                      value: state.heading.isEmpty ? WireLogic().headings[0] : state.heading,
 
-                      items: headings
-                          .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
+                      items: WireLogic().headings
+                          .map(
+                            (e) => DropdownMenuItem<String>(
+                              value: e,
+                              child: Text(e, style: TextStyle(fontSize: 18)),
+                            ),
+                          )
                           .toList(),
 
                       onChanged: (heading) {
@@ -136,7 +135,7 @@ class _WiresScreenState extends State<WiresScreen> {
                   ],
                 ),
               ),
-
+              SizedBox(height: 10),
               Expanded(
                 child: Column(
                   children: [
@@ -151,7 +150,7 @@ class _WiresScreenState extends State<WiresScreen> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(border: Border.all()),
                               child: Text(
-                                headings[0],
+                                WireLogic().headings[0],
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -164,11 +163,11 @@ class _WiresScreenState extends State<WiresScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: [
-                                  headerCell(headings[1]),
-                                  headerCell(headings[2]),
-                                  headerCell(headings[3]),
-                                  headerCell(headings[4]),
-                                  headerCell(headings[5]),
+                                  headerCell(WireLogic().headings[1]),
+                                  headerCell(WireLogic().headings[2]),
+                                  headerCell(WireLogic().headings[3]),
+                                  headerCell(WireLogic().headings[4]),
+                                  headerCell(WireLogic().headings[5]),
                                 ],
                               ),
                             ),

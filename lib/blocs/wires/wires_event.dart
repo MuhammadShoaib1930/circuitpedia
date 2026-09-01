@@ -30,3 +30,9 @@ class SelectedRowColumn extends WiresEvent {
   @override
   List<int> get props => [row, column];
 }
+
+class InitalGetData extends WiresEvent {
+  final bool isCopper;
+  final String heading;
+  const InitalGetData({required this.isCopper,required this.heading});
+}
