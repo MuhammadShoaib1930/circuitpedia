@@ -35,6 +35,11 @@ class HomeScreen extends StatelessWidget {
                 name: "Transformer",
                 namePage: AppRoutes.transformerScreen,
               ),
+              AppButton(
+                imgPath: AppIcons.copperImage,
+                name: "Wires",
+                namePage: AppRoutes.wiresScreen,
+              ),
             ],
           ),
         ),

@@ -388,14 +388,7 @@ class TransformerWidget {
                     onChanged: (newvalue) {
                       if (newvalue.isNotEmpty) {
                         context.read<TransformerBloc>().add(
-                          TransformerInformation(
-                            area: 0,
-                            index: -1,
-                            voltage: 0,
-                            wireGage: "",
-                            width: double.parse(newvalue),
-                            height: 0,
-                          ),
+                          TransformerInformation(width: double.parse(newvalue)),
                         );
                       }
                     },
@@ -413,14 +406,7 @@ class TransformerWidget {
                     onChanged: (newvalue) {
                       if (newvalue.isNotEmpty) {
                         context.read<TransformerBloc>().add(
-                          TransformerInformation(
-                            area: 0,
-                            index: -1,
-                            voltage: 0,
-                            wireGage: "",
-                            width: 0,
-                            height: double.parse(newvalue),
-                          ),
+                          TransformerInformation(height: double.parse(newvalue)),
                         );
                       }
                     },
@@ -438,14 +424,7 @@ class TransformerWidget {
                     onChanged: (newvalue) {
                       if (newvalue.isNotEmpty) {
                         context.read<TransformerBloc>().add(
-                          TransformerInformation(
-                            area: double.parse(newvalue),
-                            voltage: 0,
-                            wireGage: "",
-                            index: -1,
-                            width: 0,
-                            height: 0,
-                          ),
+                          TransformerInformation(area: double.parse(newvalue)),
                         );
                       }
                     },
@@ -458,72 +437,82 @@ class TransformerWidget {
                 SizedBox(
                   width: double.infinity.w,
                   height: 400.h,
-                  child: ListView.builder(
+                  child: ListView.separated(
+                    scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
                       return SizedBox(
-                        child: Row(
+                        child: Column(
                           children: [
                             SizedBox(
-                              width: 150.w,
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                style: textStyle,
-                                maxLength: 8,
-                                initialValue: state.area.toString(),
-                                onChanged: (newvalue) {
-                                  if (newvalue.isNotEmpty) {
-                                    context.read<TransformerBloc>().add(
-                                      TransformerInformation(
-                                        area: 0,
-                                        width: 0,
-                                        height: 0,
-                                        wireGage: "",
-                                        voltage: double.parse(newvalue),
-                                        index: index,
-                                      ),
-                                    );
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Voltage",
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text("V$index", style: textStyle),
+                                  SizedBox(
+                                    width: 100.w,
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      style: textStyle,
+                                      maxLength: 6,
+                                      initialValue: state.area.toString(),
+                                      onChanged: (newvalue) {
+                                        if (newvalue.isNotEmpty) {
+                                          context.read<TransformerBloc>().add(
+                                            TransformerInformation(
+                                              voltage: double.parse(newvalue),
+                                              index: index,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: "Voltage",
 
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50.r),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(50.r),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Text("WireGage", style: textStyle),
+                                  DropdownButton(
+                                    value: (state.wireGages.isEmpty)
+                                        ? "50"
+                                        : state.wireGages[index],
+                                    items: CopperWireData().wireGauge
+                                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      if (value != null && value.isNotEmpty) {
+                                        context.read<TransformerBloc>().add(
+                                          TransformerInformation(index: index, wireGage: value),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            DropdownButton(
-                              value: state.wireGages[index],
-                              items: CopperWireData().wireGauge
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-
-                                      child: Text(e),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                if (value != null && value.isNotEmpty) {
-                                  context.read<TransformerBloc>().add(
-                                    TransformerInformation(
-                                      area: 0,
-                                      voltage: 0,
-                                      width: 0,
-                                      height: 0,
-                                      index: index,
-                                      wireGage: value,
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
+                            if (state.currents.isNotEmpty)
+                              Text("Current = ${state.currents[index]}", style: textStyle),
+                            if (state.watts.isNotEmpty)
+                              Text(
+                                "Watts = ${state.watts[index].toStringAsFixed(2)} ${(state.watts[index] > 999) ? "OR ${(state.watts[index] / 1000).toStringAsFixed(3)} KW" : ""} ",
+                                style: textStyle,
+                              ),
+                            if (state.grams.isNotEmpty)
+                              Text(
+                                "grms = ${state.grams[index]} ${(state.grams[index] > 999) ? "OR ${(state.grams[index] / 1000).toStringAsFixed(3)} Kg" : ""} ",
+                                style: textStyle,
+                              ),
                           ],
                         ),
                       );
                     },
                     itemCount: state.voltages.length,
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
                   ),
                 ),
               ],

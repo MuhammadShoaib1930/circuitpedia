@@ -9,4 +9,5 @@ class AppIcons {
   static const String polyesterIcons = "assets/icons/polyester.png";
   static const String transformerIcons = "assets/icons/transformer_icon.png";
   static const String transformersIcons = "assets/icons/transformers.png";
+  static const String copperImage = "assets/icons/copper_silver_image.png";
 }

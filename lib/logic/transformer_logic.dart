@@ -1,6 +1,5 @@
 import 'package:circuitpedia/logic/copper_wire_data.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 
 class TransformerModel extends Equatable {
   final double voltage;
@@ -47,12 +46,12 @@ class TransformerLogic {
     List<double> currents = List.filled(n, 0);
     List<double> grams = List.filled(n, 0);
     for (int i = 0; i < voltages.length; i++) {
-      currents[i] = (CopperWireData().getWireToCurrent(wireGages[i])).ceilToDouble();
-      watts[i] = (currents[i] * voltages[i]).ceilToDouble();
+      currents[i] = (CopperWireData().getWireToCurrent(wireGages[i]));
+      watts[i] = (currents[i] * voltages[i]);
       grams[i] =
-          ((area * (findTrunsPerVoltage(area) * voltages[i]) * 66) /
-                  CopperWireData().getWireToLenthMeterPerKg(wireGages[i]))
-              .ceilToDouble();
+          double.parse(((area * (findTrunsPerVoltage(area) * voltages[i]) * 66) /
+                  CopperWireData().getWireToLenthMeterPerKg(wireGages[i])).toStringAsFixed(2))
+              ;
     }
     return {"watts": watts, "currents": currents, "grams": grams};
   }

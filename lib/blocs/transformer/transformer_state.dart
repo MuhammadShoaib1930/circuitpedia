@@ -13,7 +13,7 @@ class TransformerState extends Equatable {
 
   final List<double> watts;
   final List<double> currents;
-  final List<double> kgs;
+  final List<double> grams;
   final List<String> wireGages;
 
   final List<TransformerModel> model;
@@ -30,8 +30,8 @@ class TransformerState extends Equatable {
     this.voltages = const [0],
     this.watts = const [0],
     this.currents = const [0],
-    this.kgs = const [0],
-    this.wireGages = const ["0"],
+    this.grams = const [0],
+    this.wireGages = const ["50"],
 
   });
 
@@ -49,7 +49,7 @@ class TransformerState extends Equatable {
     voltages,
     watts,
     currents,
-    kgs,
+    grams,
     wireGages,
   ];
 
@@ -66,7 +66,7 @@ class TransformerState extends Equatable {
 
     List<double>? watts,
     List<double>? currents,
-    List<double>? kgs,
+    List<double>? grams,
     List<String>? wireGages,
 
     List<TransformerModel>? model,
@@ -84,7 +84,7 @@ class TransformerState extends Equatable {
       voltages: voltages ?? this.voltages,
       watts: watts ?? this.watts,
       currents: currents ?? this.currents,
-      kgs: kgs ?? this.kgs,
+      grams: grams ?? this.grams,
       wireGages: wireGages ?? this.wireGages,
     );
   }

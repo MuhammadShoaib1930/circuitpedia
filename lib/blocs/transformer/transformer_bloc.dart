@@ -95,60 +95,67 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
     TransformerInformation event,
     Emitter<TransformerState> emit,
   ) {
-    if (event.index == -1 && event.area != 0) {
-      emit(state.copyWith(area: event.area));
-    }
-    if (event.index == -1) {
-      if (event.height != 0) {
-        emit(
-          state.copyWith(
-            width: state.width,
-            height: event.height,
-            area: TransformerLogic().findArea(event.width, event.height),
-          ),
-        );
+    int index = event.index;
+    if (index == -1) {
+      double area = event.area;
+      double width = event.width;
+      double height = event.height;
+      if (width != -1) {
+        if (state.height != 0) {
+          emit(
+            state.copyWith(width: width, area: TransformerLogic().findArea(width, state.height)),
+          );
+        } else {
+          emit(state.copyWith(width: width));
+        }
+      } else if (height != -1) {
+        if (state.width != 0) {
+          emit(
+            state.copyWith(height: height, area: TransformerLogic().findArea(state.width, height)),
+          );
+        } else {
+          emit(state.copyWith(height: height));
+        }
       } else {
+        emit(state.copyWith(area: area));
+      }
+    } else {
+      if (index == state.voltages.length - 1) {
         emit(
-          state.copyWith(
-            width: event.width,
-            height: state.height,
-            area: TransformerLogic().findArea(event.width, event.height),
-          ),
+          state.copyWith(voltages: [...state.voltages, 0], wireGages: [...state.wireGages, "50"]),
         );
       }
-    }
-    if (event.index != -1) {
-      if (event.voltage != 0) {
-        List<double> voltage = state.voltages;
-        voltage[event.index] = event.voltage;
-        emit(state.copyWith(voltages: voltage));
-      }
-      if (event.wireGage != "") {
-        List<String> wireGages = state.wireGages;
-        state.wireGages[event.index] = event.wireGage;
+      double voltage = event.voltage;
+      String wireGage = event.wireGage;
+      if (voltage != -1) {
+        List<double> voltages = [...state.voltages];
+        voltages[index] = voltage;
+        emit(state.copyWith(voltages: voltages));
+      } else {
+        List<String> wireGages = [...state.wireGages];
+        wireGages[index] = wireGage;
         emit(state.copyWith(wireGages: wireGages));
       }
-      if (state.voltages.isNotEmpty && state.wireGages.isNotEmpty && state.area != 0) {
-        Map<String, List<double>> map = TransformerLogic().transformerInformation(
-          area: state.area,
-          voltages: (event.index == state.voltages.length - 1)
-              ? [...state.voltages, 0]
-              : state.voltages,
-          wireGages: (event.index == state.voltages.length - 1)
-              ? [...state.wireGages, " "]
-              : state.wireGages,
-        );
-
-        emit(
-          state.copyWith(
-            voltages: state.voltages,
-            wireGages: state.wireGages,
-            watts: map["watts"]!,
-            currents: map['currents']!,
-            kgs: map['kgs']!,
-          ),
-        );
-      }
+    }
+    if (state.area != 0) {
+      Map<String, List<double>> map = TransformerLogic().transformerInformation(
+        area: state.area,
+        voltages: (event.index == state.voltages.length - 1)
+            ? [...state.voltages, 0]
+            : state.voltages,
+        wireGages: (event.index == state.voltages.length - 1)
+            ? [...state.wireGages, ""]
+            : state.wireGages,
+      );
+      emit(
+        state.copyWith(
+          voltages: state.voltages,
+          wireGages: state.wireGages,
+          watts: map["watts"]!,
+          currents: map['currents']!,
+          grams: map['grams']!,
+        ),
+      );
     }
   }
 }

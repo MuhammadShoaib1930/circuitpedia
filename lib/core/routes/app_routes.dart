@@ -2,12 +2,14 @@ import 'package:circuitpedia/blocs/capacitor/capacitor_bloc.dart';
 import 'package:circuitpedia/blocs/resistor/resistor_bloc.dart';
 import 'package:circuitpedia/blocs/smd_resistor/smd_resistor_bloc.dart';
 import 'package:circuitpedia/blocs/transformer/transformer_bloc.dart';
+import 'package:circuitpedia/blocs/wires/wires_bloc.dart';
 import 'package:circuitpedia/screens/capacitor_screen.dart';
 import 'package:circuitpedia/screens/resistors_screen.dart';
 import 'package:circuitpedia/screens/smd_resistor_screen.dart';
 import 'package:circuitpedia/screens/transformer_screen.dart';
 import 'package:circuitpedia/screens/widgets/resistor_widget_color.dart';
 import 'package:circuitpedia/screens/widgets/resistor_widget_value.dart';
+import 'package:circuitpedia/screens/wires_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +24,7 @@ class AppRoutes {
   static const String transformerScreen = "/transformer_screen";
   static const String circutsScreen = "/circuts_screen";
   static const String smdResistorScreen = "/smdResistor_screen";
+  static const String wiresScreen = "/wires_screen";
 
   // widget Navigator names
   static const String resistorWidget = "/resistor_widget";
@@ -34,6 +37,11 @@ class AppRoutes {
       // screen Navigator
       GoRoute(path: homeScreen, builder: (context, state) => HomeScreen()),
       GoRoute(path: resistanceScreen, builder: (context, state) => ResistorsScreen()),
+      GoRoute(
+        path: wiresScreen,
+        builder: (context, state) =>
+            BlocProvider(create: (context) => WiresBloc(), child: WiresScreen()),
+      ),
       GoRoute(
         path: capacitorScreen,
         builder: (context, state) =>

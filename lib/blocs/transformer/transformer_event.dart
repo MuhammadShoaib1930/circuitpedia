@@ -67,12 +67,12 @@ final class TransformerInformation extends TransformerEvent {
   final double height;
   final int index;
   const TransformerInformation({
-    required this.area,
-    required this.voltage,
-    required this.wireGage,
-    required this.width,
-    required this.index,
-    required this.height,
+    this.area = -1,
+    this.voltage = -1,
+    this.wireGage = "",
+    this.width = -1,
+    this.index = -1,
+    this.height = -1,
   });
   @override
   List<Object> get props => [area, voltage, wireGage, width, height, index];
