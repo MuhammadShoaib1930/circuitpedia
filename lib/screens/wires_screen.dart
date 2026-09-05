@@ -1,4 +1,5 @@
 import 'package:circuitpedia/blocs/wires/wires_bloc.dart';
+import 'package:circuitpedia/logic/copper_wire_data.dart';
 import 'package:circuitpedia/logic/wire_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,22 +77,25 @@ class _WiresScreenState extends State<WiresScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(
-                  '${state.isCopper ? "Copper" : "Silver"} Wires',
-                  style: const TextStyle(fontSize: 24),
-                ),
+            title: DropdownButton<String>(
+              value: state.wireType.isEmpty ? "Copper" : state.wireType,
 
-                Switch(
-                  value: state.isCopper,
-                  onChanged: (value) {
-                    context.read<WiresBloc>().add(Toggle(value));
-                  },
-                ),
-              ],
+              items: CopperWireData().wireTypes
+                  .map(
+                    (e) => DropdownMenuItem<String>(
+                      value: e,
+                      child: Text(e, style: TextStyle(fontSize: 18)),
+                    ),
+                  )
+                  .toList(),
+
+              onChanged: (value) {
+                if (value != null && value.isNotEmpty) {
+                  context.read<WiresBloc>().add(WireType(value));
+                }
+              },
             ),
+
             centerTitle: true,
           ),
 
@@ -114,23 +118,25 @@ class _WiresScreenState extends State<WiresScreen> {
                     ),
                     SizedBox(width: 10),
 
-                    DropdownButton<String>(
-                      value: state.heading.isEmpty ? WireLogic().headings[0] : state.heading,
+                    SizedBox(
+                      child: DropdownButton<String>(
+                        value: state.heading.isEmpty ? WireLogic.headings[0] : state.heading,
 
-                      items: WireLogic().headings
-                          .map(
-                            (e) => DropdownMenuItem<String>(
-                              value: e,
-                              child: Text(e, style: TextStyle(fontSize: 18)),
-                            ),
-                          )
-                          .toList(),
+                        items: WireLogic.headings
+                            .map(
+                              (e) => DropdownMenuItem<String>(
+                                value: e,
+                                child: Text(e, style: TextStyle(fontSize: 18)),
+                              ),
+                            )
+                            .toList(),
 
-                      onChanged: (heading) {
-                        if (heading != null) {
-                          context.read<WiresBloc>().add(Search(heading: heading));
-                        }
-                      },
+                        onChanged: (heading) {
+                          if (heading != null) {
+                            context.read<WiresBloc>().add(Search(heading: heading));
+                          }
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -150,7 +156,7 @@ class _WiresScreenState extends State<WiresScreen> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(border: Border.all()),
                               child: Text(
-                                WireLogic().headings[0],
+                                WireLogic.headings[0],
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -163,11 +169,11 @@ class _WiresScreenState extends State<WiresScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: [
-                                  headerCell(WireLogic().headings[1]),
-                                  headerCell(WireLogic().headings[2]),
-                                  headerCell(WireLogic().headings[3]),
-                                  headerCell(WireLogic().headings[4]),
-                                  headerCell(WireLogic().headings[5]),
+                                  headerCell(WireLogic.headings[1]),
+                                  headerCell(WireLogic.headings[2]),
+                                  headerCell(WireLogic.headings[3]),
+                                  headerCell(WireLogic.headings[4]),
+                                  headerCell(WireLogic.headings[5]),
                                 ],
                               ),
                             ),
@@ -184,7 +190,7 @@ class _WiresScreenState extends State<WiresScreen> {
                             child: ListView.builder(
                               controller: firstColumnVerticalController,
 
-                              itemCount: state.wireGage.length,
+                              itemCount: state.wireGauge.length,
 
                               itemBuilder: (context, row) {
                                 final bool selected =
@@ -201,7 +207,7 @@ class _WiresScreenState extends State<WiresScreen> {
                                   ),
 
                                   child: Text(
-                                    state.wireGage[row],
+                                    state.wireGauge[row],
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(fontSize: 18),
                                   ),
@@ -222,7 +228,7 @@ class _WiresScreenState extends State<WiresScreen> {
                                 child: ListView.builder(
                                   controller: bodyVerticalController,
 
-                                  itemCount: state.wireGage.length,
+                                  itemCount: state.wireGauge.length,
 
                                   itemBuilder: (context, row) {
                                     return SizedBox(

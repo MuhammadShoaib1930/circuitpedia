@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'wires_bloc.dart';
 
 sealed class WiresEvent extends Equatable {
@@ -16,11 +15,11 @@ class Search extends WiresEvent {
   List<String> get props => [heading, value];
 }
 
-class Toggle extends WiresEvent {
-  final bool isTrue;
-  const Toggle(this.isTrue);
+class WireType extends WiresEvent {
+  final String wireType;
+  const WireType(this.wireType);
   @override
-  List<bool> get props => [isTrue];
+  List<String> get props => [wireType];
 }
 
 class SelectedRowColumn extends WiresEvent {
@@ -32,7 +31,7 @@ class SelectedRowColumn extends WiresEvent {
 }
 
 class InitalGetData extends WiresEvent {
-  final bool isCopper;
+  final String wireType;
   final String heading;
-  const InitalGetData({required this.isCopper,required this.heading});
+  const InitalGetData({required this.wireType, required this.heading});
 }

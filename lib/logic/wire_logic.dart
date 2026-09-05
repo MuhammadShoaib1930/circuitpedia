@@ -1,92 +1,16 @@
+import 'package:circuitpedia/logic/copper_wire_data.dart';
 
 class WireLogic {
-  List<String> headings = [
-    "WireGage",
+  static const List<String> headings = [
+    "wireGauge",
     "Diameter mm",
     "Diameter Inch",
     "Area mm2",
     "Max Ampere",
     "Length per Kilogram (m/kg)",
   ];
-  static Map<String, List<dynamic>> filteredList(String value, String heading, dynamic data) {
-    switch (heading.toLowerCase()) {
-      case ("wiregage"):
-        return mapData(wireGage(value, data), data);
-      case "diameter mm":
-        return mapData(diameterMm(value, data), data);
-      case "diameter inch":
-        return mapData(diameterInchs(value, data), data);
-      case "area mm2":
-        return mapData(areaMM2(value, data), data);
-      case "max ampere":
-        return mapData(maxAmpere(value, data), data);
-      case "Length per Kilogram (m/kg)":
-        return mapData(lengthMeterPerKg(value, data), data);
-      default:
-        return mapData([], data);
-    }
-  }
 
-  static List<int> wireGage(String value, dynamic data) {
-    return data.wireGauge
-        .asMap()
-        .entries
-        .where((e) => e.value.startsWith(value))
-        .map((e) => e.key)
-        .toList();
-  }
-
-  static List<int> diameterMm(String value, dynamic data) {
-    List<int> indexes = data.diameterMm
-        .asMap()
-        .entries
-        .where((e) => e.value.toString().startsWith(value))
-        .map((e) => e.key)
-        .toList();
-    return indexes;
-  }
-
-  static List<int> diameterInchs(String value, dynamic data) {
-    List<int> indexes = data.diameterInch
-        .asMap()
-        .entries
-        .where((e) => e.value.toString().startsWith(value))
-        .map((e) => e.key)
-        .toList();
-    return indexes;
-  }
-
-  static List<int> areaMM2(String value, dynamic data) {
-    List<int> indexes = data.areaMm2
-        .asMap()
-        .entries
-        .where((e) => e.value.toString().startsWith(value))
-        .map((e) => e.key)
-        .toList();
-    return indexes;
-  }
-
-  static List<int> maxAmpere(String value, dynamic data) {
-    List<int> indexes = data.maxAmpere
-        .asMap()
-        .entries
-        .where((e) => e.value.toString().startsWith(value))
-        .map((e) => e.key)
-        .toList();
-    return indexes;
-  }
-
-  static List<int> lengthMeterPerKg(String value, dynamic data) {
-    List<int> indexes = data.lengthMeterPerKg
-        .asMap()
-        .entries
-        .where((e) => e.value.toString().startsWith(value))
-        .map((e) => e.key)
-        .toList();
-    return indexes;
-  }
-
-  static Map<String, List<dynamic>> mapData(List<int> indexes, dynamic data) {
+  static Map<String, List<dynamic>> filteredList(String value, String heading, String wireType) {
     List<String> wireGages = [];
     List<double> diameterMMs = [];
     List<double> diameterInchs = [];
@@ -94,21 +18,83 @@ class WireLogic {
     List<double> maxAmperes = [];
     List<double> lengthMeterPerKgs = [];
 
-    for (int index in indexes) {
-      wireGages.add(data.wireGauge[index]);
-      diameterMMs.add(data.diameterMm[index]);
-      diameterInchs.add(data.diameterInch[index]);
-      areaMM2s.add(data.areaMm2[index]);
-      maxAmperes.add(data.maxAmpere[index]);
-      lengthMeterPerKgs.add(data.lengthMeterPerKg[index]);
+    CopperWireData copperWireData = CopperWireData();
+    if (heading == headings[0]) {
+      for (int i = 0; i < copperWireData.wireGauge.length; i++) {
+        if (copperWireData.wireGauge[i].startsWith(value)) {
+          wireGages.add(copperWireData.wireGauge[i]);
+          diameterMMs.add(copperWireData.diameterMm[i]);
+          diameterInchs.add(copperWireData.diameterInch[i]);
+          areaMM2s.add(copperWireData.areaMm2[i]);
+          maxAmperes.add(copperWireData.getWireData(wireType, true)[i]);
+          lengthMeterPerKgs.add(copperWireData.getWireData(wireType, false)[i]);
+        }
+      }
+    } else if (heading == headings[1]) {
+      for (int i = 0; i < copperWireData.diameterMm.length; i++) {
+        if (copperWireData.diameterMm[i].toString().startsWith(value)) {
+          wireGages.add(copperWireData.wireGauge[i]);
+          diameterMMs.add(copperWireData.diameterMm[i]);
+          diameterInchs.add(copperWireData.diameterInch[i]);
+          areaMM2s.add(copperWireData.areaMm2[i]);
+          maxAmperes.add(copperWireData.getWireData(wireType, true)[i]);
+          lengthMeterPerKgs.add(copperWireData.getWireData(wireType, false)[i]);
+        }
+      }
+    } else if (heading == headings[2]) {
+      for (int i = 0; i < copperWireData.diameterInch.length; i++) {
+        if (copperWireData.diameterInch[i].toString().startsWith(value)) {
+          wireGages.add(copperWireData.wireGauge[i]);
+          diameterMMs.add(copperWireData.diameterMm[i]);
+          diameterInchs.add(copperWireData.diameterInch[i]);
+          areaMM2s.add(copperWireData.areaMm2[i]);
+          maxAmperes.add(copperWireData.getWireData(wireType, true)[i]);
+          lengthMeterPerKgs.add(copperWireData.getWireData(wireType, false)[i]);
+        }
+      }
+    } else if (heading == headings[3]) {
+      for (int i = 0; i < copperWireData.areaMm2.length; i++) {
+        if (copperWireData.areaMm2[i].toString().startsWith(value)) {
+          wireGages.add(copperWireData.wireGauge[i]);
+          diameterMMs.add(copperWireData.diameterMm[i]);
+          diameterInchs.add(copperWireData.diameterInch[i]);
+          areaMM2s.add(copperWireData.areaMm2[i]);
+          maxAmperes.add(copperWireData.getWireData(wireType, true)[i]);
+          lengthMeterPerKgs.add(copperWireData.getWireData(wireType, false)[i]);
+        }
+      }
+    } else if (heading == headings[4]) {
+      List<double> maxAmpere = copperWireData.getWireData(wireType, true);
+      for (int i = 0; i < maxAmpere.length; i++) {
+        if (maxAmpere[i].toString().startsWith(value)) {
+          wireGages.add(copperWireData.wireGauge[i]);
+          diameterMMs.add(copperWireData.diameterMm[i]);
+          diameterInchs.add(copperWireData.diameterInch[i]);
+          areaMM2s.add(copperWireData.areaMm2[i]);
+          maxAmperes.add(copperWireData.getWireData(wireType, true)[i]);
+          lengthMeterPerKgs.add(copperWireData.getWireData(wireType, false)[i]);
+        }
+      }
+    } else if (heading == headings[5]) {
+      List<double> lengthMeterPerKg = copperWireData.getWireData(wireType, false);
+      for (int i = 0; i < lengthMeterPerKg.length; i++) {
+        if (lengthMeterPerKg[i].toString().startsWith(value)) {
+          wireGages.add(copperWireData.wireGauge[i]);
+          diameterMMs.add(copperWireData.diameterMm[i]);
+          diameterInchs.add(copperWireData.diameterInch[i]);
+          areaMM2s.add(copperWireData.areaMm2[i]);
+          maxAmperes.add(copperWireData.getWireData(wireType, true)[i]);
+          lengthMeterPerKgs.add(copperWireData.getWireData(wireType, false)[i]);
+        }
+      }
     }
     return {
-      "wireGages": wireGages,
-      "diameterMM": diameterMMs,
-      "diameterInch": diameterInchs,
-      "areaMm2": areaMM2s,
-      "maxAmpere": maxAmperes,
-      "lengthMeterPerKgs": lengthMeterPerKgs,
+      WireLogic.headings[0]: wireGages,
+      WireLogic.headings[1]: diameterMMs,
+      WireLogic.headings[2]: diameterInchs,
+      WireLogic.headings[3]: areaMM2s,
+      WireLogic.headings[4]: maxAmperes,
+      WireLogic.headings[5]: lengthMeterPerKgs,
     };
   }
 }

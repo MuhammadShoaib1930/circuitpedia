@@ -1,9 +1,9 @@
 part of 'wires_bloc.dart';
 
 class WiresState extends Equatable {
-  final bool isCopper;
+  final String wireType;
   final bool isSearch;
-  final List<String> wireGage;
+  final List<String> wireGauge;
   final List<double> diameterMM;
   final List<double> diameterInch;
   final List<double> areaMM2;
@@ -14,16 +14,16 @@ class WiresState extends Equatable {
   final String heading;
   final String value;
   const WiresState({
-    this.isCopper = true,
+    this.wireType = "Copper",
     this.isSearch = false,
-    this.wireGage = const [],
-    this.diameterMM = const [],
-    this.diameterInch = const [],
-    this.areaMM2 = const [],
-    this.maxAmpere = const [],
+    this.wireGauge = const [""],
+    this.diameterMM = const [0],
+    this.diameterInch = const [0],
+    this.areaMM2 = const [0],
+    this.maxAmpere = const [0],
     this.selectedRow = 0,
     this.selectedColumn = 0,
-    this.lengthMeterPerKg = const [],
+    this.lengthMeterPerKg = const [0],
     this.heading = "WireGage",
     this.value = "",
   });
@@ -31,9 +31,9 @@ class WiresState extends Equatable {
   @override
   List<Object> get props {
     return [
-      isCopper,
+      wireType,
       isSearch,
-      wireGage,
+      wireGauge,
       diameterMM,
       diameterInch,
       areaMM2,
@@ -47,9 +47,9 @@ class WiresState extends Equatable {
   }
 
   WiresState copyWith({
-    bool? isCopper,
+    String? wireType,
     bool? isSearch,
-    List<String>? wireGage,
+    List<String>? wireGauge,
     List<double>? diameterMM,
     List<double>? diameterInch,
     List<double>? areaMM2,
@@ -61,9 +61,9 @@ class WiresState extends Equatable {
     String? value,
   }) {
     return WiresState(
-      isCopper: isCopper ?? this.isCopper,
+      wireType: wireType ?? this.wireType,
       isSearch: isSearch ?? this.isSearch,
-      wireGage: wireGage ?? this.wireGage,
+      wireGauge: wireGauge ?? this.wireGauge,
       diameterMM: diameterMM ?? this.diameterMM,
       diameterInch: diameterInch ?? this.diameterInch,
       areaMM2: areaMM2 ?? this.areaMM2,

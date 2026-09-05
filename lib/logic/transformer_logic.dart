@@ -40,25 +40,29 @@ class TransformerLogic {
     required double area,
     required List<double> voltages,
     required List<String> wireGages,
-    required List<bool> isCopper,
+    required List<String> wireTypes,
   }) {
     int n = voltages.length;
     List<double> watts = List.filled(n, 0);
     List<double> currents = List.filled(n, 0);
     List<double> grams = List.filled(n, 0);
     for (int i = 0; i < voltages.length; i++) {
-      currents[i] = (CopperWireData().getWireToCurrent(gauge: wireGages[i], isCopper: isCopper[i]));
+      currents[i] = (CopperWireData().getWireToCurrent(
+        gauge: wireGages[i],
+        wireType: wireTypes[i],
+      ));
       watts[i] = (currents[i] * voltages[i]);
       grams[i] = double.parse(
         ((area * (findTrunsPerVoltage(area) * voltages[i]) * 66) /
                 CopperWireData().getWireToLenthMeterPerKg(
                   gauge: wireGages[i],
-                  isCopper: isCopper[i],
+                  wireType: wireTypes[i],
                 ))
             .toStringAsFixed(2),
       );
     }
-    return {"watts": watts, "currents": currents, "grams": grams, "isCopper": isCopper};
+    
+    return {"watts": watts, "currents": currents, "grams": grams, "wireTypes": wireTypes};
   }
 
   Map<String, List<double>> upsCalculate(double area) {

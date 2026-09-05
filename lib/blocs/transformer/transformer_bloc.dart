@@ -126,7 +126,7 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
           state.copyWith(
             voltages: [...state.voltages, 0],
             wireGages: [...state.wireGages, "50"],
-            isCopper: [...state.isCopper, true],
+            wireTypes: [...state.wireTypes, "Copper"], // note put inital value
           ),
         );
       }
@@ -140,24 +140,24 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
         List<String> wireGages = [...state.wireGages];
         wireGages[index] = wireGage;
         emit(state.copyWith(wireGages: wireGages));
-      } else {
-        List<bool> isCoppers = [...state.isCopper];
-        isCoppers[index] = event.isCopper;
-        emit(state.copyWith(isCopper: isCoppers));
+      } else if(event.wireType.isNotEmpty){
+        List<String> wireTypes = [...state.wireTypes];
+        wireTypes[index] = event.wireType;
+        emit(state.copyWith(wireTypes: wireTypes));
       }
     }
-    if (state.area != 0) {
+    if (state.area != 0 ) {
       Map<String, List<dynamic>> map = TransformerLogic().transformerInformation(
         area: state.area,
         voltages: (event.index == state.voltages.length - 1)
             ? [...state.voltages, 0]
             : state.voltages,
         wireGages: (event.index == state.voltages.length - 1)
-            ? [...state.wireGages, ""]
+            ? [...state.wireGages, "50"]
             : state.wireGages,
-        isCopper: (event.index == state.isCopper.length - 1)
-            ? [...state.isCopper, true]
-            : state.isCopper,
+        wireTypes: (event.index == state.wireTypes.length - 1)
+            ? [...state.wireTypes, "Copper"]
+            : state.wireTypes,
       );
       emit(
         state.copyWith(
@@ -166,9 +166,10 @@ class TransformerBloc extends Bloc<TransformerEvent, TransformerState> {
           watts: map["watts"]! as List<double>,
           currents: map['currents']! as List<double>,
           grams: map['grams']! as List<double>,
-          isCopper: map['isCopper']! as List<bool>,
+          wireTypes: map['wireTypes']! as List<String>,
         ),
       );
+
     }
   }
 }
